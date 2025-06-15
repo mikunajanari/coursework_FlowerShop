@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="utf-8">
+  <title>Панель Кур’єра</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Підключення стилів -->
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <!-- Шапка -->
+  <section class="top-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">📞 Контакти: +380-00-000-0000</div>
+        <div class="col-md-4 text-center"><strong>EVERGREEN</strong></div>
+        <div class="col-md-4 text-right">
+          <span>👤 <span id="user-role">Кур’єр</span></span>
+          <button class="btn btn-sm btn-outline-danger ml-2" id="logout-btn">Вийти</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контент -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center">🚚 Панель кур’єра</h2>
+
+      <!-- Список замовлень на сьогодні -->
+      <h4>Замовлення для доставки сьогодні</h4>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ПІБ</th>
+            <th>Телефон</th>
+            <th>Адреса</th>
+            <th>Дії</th>
+          </tr>
+        </thead>
+        <tbody id="today-orders-body"></tbody>
+      </table>
+
+      <!-- Замовлення в роботі -->
+      <h4>Мої доставки</h4>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ПІБ</th>
+            <th>Телефон</th>
+            <th>Адреса</th>
+            <th>Дії</th>
+          </tr>
+        </thead>
+        <tbody id="in-progress-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer class="footer text-center">
+    <div class="container">
+      <p class="copyright-text">© 2025 EVERGREEN для Кур’єрів ✿</p>
+    </div>
+  </footer>
+
+
+<script src="{% static 'js/courier_panel.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

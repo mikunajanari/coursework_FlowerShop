@@ -1,4 +1,4 @@
-from datetime import timezone
+from django.utils import timezone
 from django.db import models
 import re
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -98,7 +98,7 @@ class FullNameMixin:
 class Couriers(FullNameMixin, models.Model):
     kod = models.AutoField(primary_key=True)
     cour_name = models.CharField(max_length=255)
-    email = models.CharField(unique=True, max_length=255)
+    email = models.EmailField(unique=True, max_length=255)
     phone_number = models.CharField(unique=True, max_length=20)
 
     composite_field_name = 'cour_name'
@@ -114,9 +114,9 @@ class Customers(FullNameMixin, AddressMixin, models.Model):
     kod = models.AutoField(primary_key=True)
     cust_name = models.CharField(max_length=255)
     phone_number = models.CharField(unique=True, max_length=20)
-    email = models.CharField(unique=True, max_length=255)
+    email = models.EmailField(unique=True, max_length=255)
     address = models.CharField(max_length=255)
-    photo_link = models.TextField(blank=True, null=True)
+    photo_link = models.URLField(blank=True, null=True)
 
     composite_field_name = 'cust_name'
 
@@ -143,15 +143,26 @@ class Orders(models.Model):
     ]
 
     o_kod = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customers, models.DO_NOTHING, db_column='customer')
-    order_date = models.DateField(editable=False, default=timezone.now)
+    customer = models.ForeignKey(
+        Customers,
+        on_delete=models.SET_DEFAULT,
+        default=0,
+        db_column='customer'
+    )
+    order_date = models.DateField(auto_now_add=True)
     delivery_date = models.DateField()
     delivery_method = models.CharField(
         max_length=30,
         choices=DELIVERY_CHOICES,
         default='кур’єр'
     )
-    courier_id = models.ForeignKey(Couriers, models.DO_NOTHING, blank=True, null=True, db_column='courier_id')
+    courier_id = models.ForeignKey(
+        Couriers,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_column='courier_id'
+    )
     order_status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -179,10 +190,15 @@ class Genera(models.Model):
 class Species(models.Model):
     s_kod = models.AutoField(primary_key=True)
     species_name = models.CharField(max_length=30)
-    genus = models.ForeignKey(Genera, models.DO_NOTHING, db_column='genus')
+    genus = models.ForeignKey(Genera, on_delete=models.PROTECT, db_column='genus')
     instruction = models.CharField(max_length=500, default='No instructions')
-    storage_period = models.SmallIntegerField()
-    photo_link = models.TextField(unique=True)
+    storage_period = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, message="Кількість має бути більше нуля."),
+            MaxValueValidator(299, message="Кількість має бути меншою за 300.")
+        ]
+    )
+    photo_link = models.URLField(unique=True, max_length=500)
 
     class Meta:
         managed = False
@@ -193,9 +209,9 @@ class Species(models.Model):
 
 class Planted(models.Model):
     p_kod = models.AutoField(primary_key=True)
-    flower = models.ForeignKey(Species, models.DO_NOTHING, db_column='flower')
-    planting_day = models.DateField(editable=False, default=timezone.now)
-    amount = models.IntegerField(
+    flower = models.ForeignKey(Species, on_delete=models.PROTECT, db_column='flower')
+    planting_day = models.DateField(auto_now_add=True)
+    amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message="Кількість має бути більше нуля."),
             MaxValueValidator(9999, message="Кількість має бути меншою за 10 000.")
@@ -212,8 +228,8 @@ class Planted(models.Model):
 class DefectiveProduct(models.Model):
     kod = models.AutoField(primary_key=True)
     flower = models.ForeignKey(Planted, on_delete=models.CASCADE, db_column='flower')
-    write_off_date = models.DateField(editable=False, default=timezone.now)
-    amount = models.IntegerField(
+    write_off_date = models.DateField(auto_now_add=True)
+    amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1, message="Кількість має бути більше нуля.")
         ]
@@ -228,8 +244,13 @@ class DefectiveProduct(models.Model):
 
 class Product(models.Model):
     kod = models.AutoField(primary_key=True)
-    flower = models.ForeignKey(Planted, models.DO_NOTHING, db_column='flower')
-    availability_date = models.DateField(editable=False, default=timezone.now)
+    flower = models.ForeignKey(
+        Planted,
+        on_delete=models.SET_DEFAULT,
+        default=0,
+        db_column='flower'
+    )
+    availability_date = models.DateField(auto_now_add=True)
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -262,8 +283,8 @@ class Fertilizers(models.Model):
 
 class GenusFertilizer(models.Model):
     kod = models.AutoField(primary_key=True)
-    genus = models.ForeignKey(Genera, models.DO_NOTHING, db_column='genus')
-    fertilizer = models.ForeignKey(Fertilizers, models.DO_NOTHING, db_column='fertilizer')
+    genus = models.ForeignKey(Genera, on_delete=models.PROTECT, db_column='genus')
+    fertilizer = models.ForeignKey(Fertilizers, on_delete=models.PROTECT, db_column='fertilizer')
 
     class Meta:
         managed = False
@@ -286,13 +307,15 @@ class Suppliers(AddressMixin, models.Model):
         return f"{self.supplier_name} ({self.address}, {self.phone_number})"
 
 class OrderedFertilizers(models.Model):
-    fertilizer_id = models.ForeignKey(Fertilizers, models.DO_NOTHING, db_column='fertilizer_id')
-    supplier_id = models.ForeignKey(Suppliers, models.DO_NOTHING, db_column='supplier_id')
-    date_of_purchase = models.DateField(editable=False, default=timezone.now)
-    amount = models.IntegerField(validators=[
-        MinValueValidator(1),
-        MaxValueValidator(99999)
-    ])
+    fertilizer_id = models.ForeignKey(Fertilizers, on_delete=models.PROTECT, db_column='fertilizer_id')
+    supplier_id = models.ForeignKey(Suppliers, on_delete=models.PROTECT, db_column='supplier_id')
+    date_of_purchase = models.DateField(auto_now_add=True)
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(99999)
+        ]
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[
         MinValueValidator(0.01),
         MaxValueValidator(99999.99)
@@ -307,11 +330,13 @@ class OrderedFertilizers(models.Model):
         return f"{self.fertilizer_id.fertilizer_name} від {self.supplier_id.supplier_name} — {self.date_of_purchase}"
 
 class UsedFertilizers(models.Model):
-    genus_fertilizer_id = models.ForeignKey(GenusFertilizer, models.DO_NOTHING, db_column='genus_fertilizer_id')
-    use_date = models.DateField(editable=False, default=timezone.now)
-    amount = models.IntegerField(validators=[
-        MinValueValidator(1, message="Кількість має бути більшою за 0.")
-    ])
+    genus_fertilizer_id = models.ForeignKey(GenusFertilizer, on_delete=models.PROTECT, db_column='genus_fertilizer_id')
+    use_date = models.DateField(auto_now_add=True)
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, message="Кількість має бути більшою за 0.")
+        ]
+    )
 
     class Meta:
         managed = False
@@ -323,11 +348,13 @@ class UsedFertilizers(models.Model):
 
 class OrderItems(models.Model):
     kod = models.AutoField(primary_key=True)
-    order_id = models.ForeignKey(Orders, models.DO_NOTHING, db_column='order_id')
-    flower = models.ForeignKey(Species, models.DO_NOTHING, db_column='flower')
-    amount = models.IntegerField(validators=[
-        MinValueValidator(1, message="Кількість має бути більшою за 0.")
-    ])
+    order_id = models.ForeignKey(Orders, on_delete=models.PROTECT, db_column='order_id')
+    flower = models.ForeignKey(Species, on_delete=models.PROTECT, db_column='flower')
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, message="Кількість має бути більшою за 0.")
+        ]
+    )
 
     class Meta:
         managed = False
@@ -338,12 +365,14 @@ class OrderItems(models.Model):
         return f"Замовлення #{self.order_id.o_kod} — {self.flower.species_name} — Кількість: {self.amount}"
 
 class ProductOrderItems(models.Model):
-    product = models.ForeignKey(Product, models.DO_NOTHING, db_column='product')
-    order_item = models.ForeignKey(OrderItems, models.DO_NOTHING, db_column='order_item')
-    amount = models.IntegerField(validators=[
-        MinValueValidator(1, message="Кількість має бути більшою за 0."),
-        MaxValueValidator(99999, message="Кількість має бути меншою за 100 000.")
-    ])
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, db_column='product')
+    order_item = models.ForeignKey(OrderItems, on_delete=models.PROTECT, db_column='order_item')
+    amount = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1, message="Кількість має бути більшою за 0."),
+            MaxValueValidator(99999, message="Кількість має бути меншою за 100 000.")
+        ]
+    )
 
     class Meta:
         managed = False
