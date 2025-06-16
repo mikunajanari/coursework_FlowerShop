@@ -4,9 +4,6 @@ from django.db import connection
 import json
 from django.shortcuts import render
 
-def test(request):
-    return HttpResponse("Панель кур'єра")
-
 def courier(request):
     return render(request, 'flower_shop/courier_dashboard.html')
 

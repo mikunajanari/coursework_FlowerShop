@@ -1,0 +1,35 @@
+{% extends "flower_shop/base.html" %}
+
+{% block title %}{% block profile_title %}Профіль{% endblock %}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="content">
+                    <h1 class="page-name">{% block profile_page_name %}Профіль{% endblock %}</h1>
+                    <ol class="breadcrumb">
+                        <li><a href="{% url 'index' %}">Головна</a></li>
+                        <li class="active">{% block profile_breadcrumb %}мій профіль{% endblock %}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="user-dashboard" style="padding: 70px 0 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-inline dashboard-menu text-center">
+                    <li><a class="{% block profile_details_active %}{% endblock %}" href="{% url 'profile_details' %}">Деталі профілю</a></li>
+                    <li><a class="{% block client_orders_active %}{% endblock %}" href="{% url 'client_orders' %}">Замовлення</a></li>
+                </ul>
+                {% block profile_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

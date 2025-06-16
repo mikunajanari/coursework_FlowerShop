@@ -42,23 +42,7 @@
   // e-commerce touchspin
   $('input[name=\'product-quantity\']').TouchSpin();
 
-
-  // Video Lightbox
-  $(document).on('click', '[data-toggle="lightbox"]', function (event) {
-    event.preventDefault();
-    $(this).ekkoLightbox();
-  });
-
-
-  // Count Down JS
-  $('#simple-timer').syotimer({
-    year: 2022,
-    month: 5,
-    day: 9,
-    hour: 20,
-    minute: 30
-  });
-
+  
   //Hero Slider
   $('.hero-slider').slick({
     // autoplay: true,
@@ -77,17 +61,22 @@
 })(jQuery);
 
 // Показуємо роль
-const user = JSON.parse(localStorage.getItem("user"));
-if (user?.role) {
-  document.getElementById("user-role").textContent =
-    user.role.charAt(0).toUpperCase() + user.role.slice(1);
-}
+document.addEventListener("DOMContentLoaded", function () {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) {
+    document.getElementById("user-role").textContent =
+      user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  }
 
 // Обробка кнопки "Вийти"
-document.getElementById("logout-btn").addEventListener("click", () => {
-  const confirmed = confirm("Ви точно хочете вийти зі свого облікового запису?");
-  if (confirmed) {
-    localStorage.removeItem("user"); // або sessionStorage.clear()
-    window.location.href = "index.html";
+const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      const confirmed = confirm("Ви точно хочете вийти зі свого облікового запису?");
+      if (confirmed) {
+        localStorage.removeItem("user");
+        window.location.href = "index.html";
+      }
+    });
   }
 });

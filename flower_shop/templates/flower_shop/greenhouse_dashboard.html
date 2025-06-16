@@ -1,0 +1,366 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="utf-8">
+  <title>Працівник теплиць</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <!-- Шапка -->
+  <section class="top-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">📞 Контакти: +380-00-000-0000</div>
+        <div class="col-md-4 text-center"><strong>EVERGREEN</strong></div>
+        <div class="col-md-4 text-right">
+          <span>👤 <span id="user-role">Працівник теплиць</span></span>
+          <button class="btn btn-sm btn-outline-danger ml-2" id="logout-btn">Вийти</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контент -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center">🌿 Панель Працівника теплиць</h2>
+
+
+      <form id="planting-form">
+  <h4>🌱 Посадка квітів + 💧 Добриво</h4>
+  <div class="row">
+    <div class="col-md-3">
+      <label>Рід квітки</label>
+      <input list="flower-genus-list" id="genus-input" class="form-control" required>
+      <datalist id="flower-genus-list"></datalist>
+    </div>
+    <div class="col-md-3">
+      <label>Вид квітки</label>
+      <input list="flower-species-list" id="species-input" class="form-control" required>
+      <datalist id="flower-species-list"></datalist>
+    </div>
+    <div class="col-md-2">
+      <label>Кількість квітів</label>
+      <input type="number" id="planting-count" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label>Добриво</label>
+      <select id="fertilizer-select" class="form-control" required></select>
+    </div>
+    <div class="col-md-2">
+      <label>К-сть добрива</label>
+      <input type="number" id="fertilizer-amount" class="form-control" min="1" required>
+    </div>
+  </div>
+
+  <button class="btn btn-success mt-3">🌿 Посадити</button>
+</form>
+
+<div id="planting-result" class="mt-2"></div>
+
+
+
+      <h4 class="mt-5">✅ Відмітити готовність рослин</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Рід</th>
+            <th>Вид</th>
+            <th>Кількість</th>
+            <th>Дата посадки</th>
+            <th>Дії</th>
+          </tr>
+        </thead>
+        <tbody id="ready-plants-table">
+          <!-- Динамічний список -->
+        </tbody>
+      </table>
+
+
+      <h4 class="mt-5">🗑️ Списання рослин</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Рід</th>
+            <th>Вид</th>
+            <th>Кількість</th>
+            <th>Дата посадки</th>
+            <th>Дії</th>
+          </tr>
+        </thead>
+        <tbody id="remove-plants-table">
+          <!-- Динамічний список -->
+        </tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <footer class="footer text-center">
+    <div class="container">
+      <p class="copyright-text">© 2025 EVERGREEN</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('/api/plants/available') // Квіти
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById("flower-select");
+          data.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.id;
+            opt.textContent = `${item.genus} ${item.species} (посаджено ${item.quantity})`;
+            select.appendChild(opt);
+          });
+        });
+
+      fetch('/api/fertilizer/list') // Добрива
+        .then(res => res.json())
+        .then(data => {
+          const select = document.getElementById("fertilizer-select");
+          data.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.id;
+            opt.textContent = `${item.name} (${item.supplier})`;
+            select.appendChild(opt);
+          });
+        });
+
+      // Обробка форми
+      document.getElementById("fertilizer-form").addEventListener("submit", e => {
+        e.preventDefault();
+
+        const payload = {
+          flowerId: document.getElementById("flower-select").value,
+          fertilizerId: document.getElementById("fertilizer-select").value,
+          amount: parseInt(document.getElementById("fertilizer-amount").value),
+        };
+
+        fetch('/api/fertilizer/use', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(res => {
+          if (res.ok) {
+            document.getElementById("fertilizer-result").innerHTML = `<div class="alert alert-success">🌱 Добриво застосовано успішно!</div>`;
+          } else {
+            document.getElementById("fertilizer-result").innerHTML = `<div class="alert alert-danger">❌ Помилка при збереженні!</div>`;
+          }
+        });
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+  // 🪴 Обробка посадки квітів
+  document.getElementById("planting-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const speciesName = document.getElementById("species-input").value.trim();
+    const quantity = parseInt(document.getElementById("planting-count").value);
+
+    // ⚠️ Потрібно знайти species_id за назвою (можна зберігати в map при завантаженні, тут — спрощено)
+    fetch("/api/species/list")
+      .then(res => res.json())
+      .then(speciesList => {
+        const match = speciesList.find(s => s.name === speciesName);
+        if (!match) return alert("Не знайдено такий вид квітки!");
+
+        fetch("/api/plant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            species_id: match.id,
+            quantity: quantity
+          })
+        }).then(res => {
+          if (res.ok) {
+            document.getElementById("planting-result").innerHTML =
+              `<div class="alert alert-success">✅ Посадку виконано успішно</div>`;
+          } else {
+            res.text().then(text => alert("❌ Помилка: " + text));
+          }
+        });
+      });
+  });
+
+  // ✅ Завантажити рослини для відмітки готовності
+  fetch("/api/plants/unready")
+    .then(res => res.json())
+    .then(plants => {
+      const tbody = document.getElementById("ready-plants-table");
+      plants.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p.genus}</td>
+          <td>${p.species}</td>
+          <td>${p.amount}</td>
+          <td>${p.planting_day}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-success" data-id="${p.id}">✅ Готово</button>
+          </td>`;
+        tbody.appendChild(row);
+      });
+
+      tbody.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const plantedId = btn.dataset.id;
+          fetch("/api/ready", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ planted_id: plantedId })
+          }).then(res => {
+            if (res.ok) {
+              btn.textContent = "✅ Відмічено";
+              btn.disabled = true;
+            } else {
+              res.text().then(text => alert("❌ Помилка: " + text));
+            }
+          });
+        });
+      });
+    });
+
+  // 🗑️ Завантажити список для списання
+  fetch("/api/plants/available_for_writeoff")
+    .then(res => res.json())
+    .then(plants => {
+      const tbody = document.getElementById("remove-plants-table");
+      plants.forEach(p => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p.genus}</td>
+          <td>${p.species}</td>
+          <td>${p.amount}</td>
+          <td>${p.planting_day}</td>
+          <td>
+            <input type="number" min="1" max="${p.amount}" placeholder="Кількість" class="form-control form-control-sm mb-1 writeoff-count">
+            <button class="btn btn-sm btn-outline-danger" data-id="${p.id}">🗑️ Списати</button>
+          </td>`;
+        tbody.appendChild(row);
+      });
+
+      tbody.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const plantedId = btn.dataset.id;
+          const input = btn.parentElement.querySelector(".writeoff-count");
+          const count = parseInt(input.value);
+          if (!count || count <= 0) return alert("Вкажіть кількість для списання");
+
+          fetch("/api/writeoff", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ planted_id: plantedId, quantity: count })
+          }).then(res => {
+            if (res.ok) {
+              btn.textContent = "✅ Списано";
+              btn.disabled = true;
+              input.disabled = true;
+            } else {
+              res.text().then(text => alert("❌ Помилка: " + text));
+            }
+          });
+        });
+      });
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  let speciesData = [];
+  let genusFertilizerMap = {}; // ключ: genus_id, значення: [{id, name, supplier}]
+
+  // Завантаження родів і видів
+  fetch('/api/species')
+    .then(res => res.json())
+    .then(data => {
+      speciesData = data;
+
+      const genusSet = new Set();
+      const genusDatalist = document.getElementById("flower-genus-list");
+      const speciesDatalist = document.getElementById("flower-species-list");
+
+      data.forEach(({ id, name, genus, genus_id }) => {
+        if (!genusSet.has(genus)) {
+          const opt = document.createElement("option");
+          opt.value = genus;
+          genusDatalist.appendChild(opt);
+          genusSet.add(genus);
+        }
+
+        const opt2 = document.createElement("option");
+        opt2.value = name;
+        opt2.setAttribute("data-species-id", id);
+        opt2.setAttribute("data-genus-id", genus_id);
+        speciesDatalist.appendChild(opt2);
+      });
+    });
+
+  // Завантаження всіх добрив згрупованих по роду
+  fetch('/api/fertilizer/grouped')
+    .then(res => res.json())
+    .then(data => {
+      genusFertilizerMap = data;
+    });
+
+  // При виборі виду - оновлюємо список добрив
+  document.getElementById("species-input").addEventListener("input", () => {
+    const speciesInput = document.getElementById("species-input").value;
+    const match = speciesData.find(s => s.name === speciesInput);
+
+    const fertSelect = document.getElementById("fertilizer-select");
+    fertSelect.innerHTML = `<option value="">-- Оберіть добриво --</option>`;
+
+    if (match && genusFertilizerMap[match.genus_id]) {
+      genusFertilizerMap[match.genus_id].forEach(f => {
+        const opt = document.createElement("option");
+        opt.value = f.id;
+        opt.textContent = `${f.name} (${f.supplier})`;
+        fertSelect.appendChild(opt);
+      });
+    }
+  });
+
+  // Відправка форми посадки
+  document.getElementById("planting-form").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const speciesName = document.getElementById("species-input").value;
+    const species = speciesData.find(s => s.name === speciesName);
+
+    const payload = {
+      species_id: species.id,
+      quantity: parseInt(document.getElementById("planting-count").value),
+      genus_fertilizer_id: parseInt(document.getElementById("fertilizer-select").value),
+      fertilizer_amount: parseInt(document.getElementById("fertilizer-amount").value)
+    };
+
+    fetch('/api/plants/plant-with-fertilizer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(res => {
+      if (res.ok) {
+        document.getElementById("planting-result").innerHTML = `<div class="alert alert-success">✅ Посадка з добривом успішна</div>`;
+      } else {
+        document.getElementById("planting-result").innerHTML = `<div class="alert alert-danger">❌ Помилка</div>`;
+      }
+    });
+  });
+});
+  </script>
+
+<script src="{% static 'plugins/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

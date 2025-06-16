@@ -1,0 +1,66 @@
+{% extends "flower_shop/profile_base.html" %}
+
+{% block profile_title %}EVERGREEN About{% endblock %}
+{% block profile_page_name %}Профіль{% endblock %}
+{% block profile_breadcrumb %}мій профіль{% endblock %}
+{% block profile_details_active %}active{% endblock %}
+
+{% block profile_content %}
+<div class="dashboard-wrapper dashboard-user-profile">
+	<div class="media">
+		<div class="pull-left text-center" href="#!">
+			<img class="media-object user-img" src="images/default-profile-picture.jpg" alt="Image">
+			<a href="#x" class="btn btn-transparent mt-20">Змінити зображення</a>
+		</div>
+		<div class="pull-right text-center" role="button">
+			<button type="button" class="btn btn-default"><i class="tf-pencil2" aria-hidden="true"></i></button>
+		</div>
+		<div class="media-body">
+			<ul class="user-profile-list">
+				<li><span>Повне ім'я:</span>...</li>
+				<li><span>Email:</span>....</li>
+				<li><span>Телефон:</span>....</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+<section class="user-dashboard" style="padding: 30px 0;">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="dashboard-wrapper user-dashboard">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Місто</th>
+									<th>Вулиця</th>
+									<th>Будинок</th>
+									<th>Квартира</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Одеса</td>
+									<td>вул. Миру 2</td>
+									<td>2</td>
+									<td>13</td>
+									<td>
+										<div class="btn-round" role="button">
+											<button type="button" class="btn btn-default"><i class="tf-pencil2"
+													aria-hidden="true"></i></button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

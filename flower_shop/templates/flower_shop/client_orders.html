@@ -1,0 +1,67 @@
+{% extends "flower_shop/profile_base.html" %}
+
+{% block profile_title %}EVERGREEN Orders{% endblock %}
+{% block profile_page_name %}Мої замовлення{% endblock %}
+{% block profile_breadcrumb %}замовлення{% endblock %}
+{% block client_orders_active %}active{% endblock %}
+
+{% block profile_content %}
+<div class="dashboard-wrapper user-dashboard">
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Номер замовлення</th>
+					<th>Дата</th>
+					<th>Товари</th>
+					<th>Загальна вартість</th>
+					<th>Стан замовлення</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>#451231</td>
+					<td>Mar 25, 2016</td>
+					<td>2</td>
+					<td>$99.00</td>
+					<td><span class="label label-primary">Створено</span></td>
+					<td><a href="order.html" class="btn btn-default">Відмінити</a></td>
+				</tr>
+				<tr>
+					<td>#451231</td>
+					<td>Mar 25, 2016</td>
+					<td>3</td>
+					<td>$150.00</td>
+					<td><span class="label label-success">Доставлено</span></td>
+					<td><a href="order.html" class="btn btn-default">Відмінити</a></td>
+				</tr>
+				<tr>
+					<td>#451231</td>
+					<td>Mar 25, 2016</td>
+					<td>3</td>
+					<td>$150.00</td>
+					<td><span class="label label-danger">Відмінено</span></td>
+					<td><a href="order.html" class="btn btn-default">Відмінити</a></td>
+				</tr>
+				<tr>
+					<td>#451231</td>
+					<td>Mar 25, 2016</td>
+					<td>2</td>
+					<td>$99.00</td>
+					<td><span class="label label-danger">Не доставлено</span></td>
+					<td><a href="order.html" class="btn btn-default">Відмінити</a></td>
+				</tr>
+				<tr>
+					<td>#451231</td>
+					<td>Mar 25, 2016</td>
+					<td>3</td>
+					<td>$150.00</td>
+					<td><span class="label label-primary">В дорозі</span></td>
+					<td><a href="order.html" class="btn btn-default">Відмінити</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

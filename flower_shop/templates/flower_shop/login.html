@@ -1,0 +1,29 @@
+{% extends "flower_shop/base.html" %}
+
+{% block title %}Вхід{% endblock %}
+
+{% block content %}
+<section class="signin-page account">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="block text-center">
+          <h2 class="text-center">Ласкаво просимо</h2>
+          <form class="text-left clearfix" action="index.html" >
+            <div class="form-group">
+              <input type="email" class="form-control"  placeholder="Email">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Пароль">
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-main text-center" >Увійти</button>
+            </div>
+          </form>
+          <p class="mt-20">Вперше на цьому сайті?<a href="{% url 'signup' %}"> Створити новий акаунт</a></p>
+          <p><a href="forget-password.html"> Забули пароль?</a></p>
+        </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
