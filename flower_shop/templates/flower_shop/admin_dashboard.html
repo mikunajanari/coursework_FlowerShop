@@ -1,103 +1,77 @@
+{% extends "flower_shop/worker_base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="utf-8">
-    <title>Панель адміністратора</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
 
-<body>
-<section class="top-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">📞 Контакти: +380-00-000-0000</div>
-            <div class="col-md-4 text-center"><strong>EVERGREEN</strong></div>
-            <div class="col-md-4 text-right">
-                <span>👤 <span id="user-role">Адміністратор</span></span>
-          <button class="btn btn-sm btn-outline-danger ml-2" id="logout-btn">Вийти</button>
-            </div>
-        </div>
-    </div>
-</section>
+{% block worker_title %}Панель Адміністратора{% endblock %}
+{% block worker_role %}Адміністратор{% endblock %}
 
-<section class="section">
-    <div class="container">
-        <h2 class="text-center">⚙️ Панель адміністратора</h2>
+{% block worker_content %}
+<h2 class="text-center">⚙️ Панель адміністратора</h2>
 
-        <!-- А1: Додати рід -->
-        <form method="post" action="{% url 'add_genus' %}" class="widget mt-4">
-            {% csrf_token %}
-            <h4>+ Додати новий рід квітів</h4>
-            <input type="text" name="genus_name" class="form-control form-group mb-2" placeholder="Назва роду" required>
-            <button type="submit" class="btn btn-primary">Додати</button>
-        </form>
+<!-- А1: Додати рід -->
+<div class="widget mt-4">
+    <h4>+ Додати новий рід квітів</h4>
+    <input type="text" id="genus_name" class="form-control form-group mb-2" placeholder="Назва роду" required>
+    <button type="button" class="btn btn-primary" onclick="addGenus(event)">Додати</button>
+</div>
 
-        <!-- А2: Додати вид (через SQL-функцію) -->
-        <form method="post" action="{% url 'add_species_sql' %}" class="widget mt-4">
-            {% csrf_token %}
-            <h4>+ Додати новий вид квітки</h4>
-            <input type="text" name="species_name" class="form-group form-control mb-2" placeholder="Назва виду" required>
-            <input type="text" class="form-group form-control mb-2" placeholder="Рід" required>
-            <textarea name="instruction" class="form-group form-control mb-2" placeholder="Інструкція" required></textarea>
-            <input type="number" name="storage_period" class="form-group form-control mb-2" placeholder="Період зберігання (міс.)" required>
-            <input type="url" name="photo_link" class="form-group form-control mb-2" placeholder="Посилання на зображення (можна залишити порожнім)">
-            <button type="submit" class="btn btn-primary">Додати</button>
-        </form>
+<!-- А2: Додати вид (SQL функція) -->
+<div class="widget mt-4">
+    <h4>+ Додати новий вид квітів</h4>
+    <input type="text" id="species_name" class="form-control form-group mb-2" placeholder="Назва виду" required>
+    <select id="species_genus_name" class="form-control form-group mb-2" required>
+        <option value="">Оберіть рід...</option>
+        <!-- Варіанти будуть додані JS-ом -->
+    </select>
+    <input type="text" id="species_instructions" class="form-control form-group mb-2"
+        placeholder="Інструкція з догляду" required>
+    <input type="number" id="species_storage_period" class="form-control form-group mb-2"
+        placeholder="Термін зберігання (місяців)" min="1" required>
+    <input type="text" id="species_photo_link" class="form-control form-group mb-2"
+        placeholder="Посилання на зображення" required>
+    <button type="button" class="btn btn-primary" onclick="addSpecies(event)">Додати</button>
+</div>
 
-        <!-- А3: Додати добриво -->
-        <form method="post" action="{% url 'add_fertilizer' %}" class="widget mt-4">
-            {% csrf_token %}
-            <h4>+ Додати нове добриво</h4>
-            <input type="text" name="fertilizer_name" class="form-control form-group mb-2" placeholder="Назва добрива" required>
-            <button type="submit" class="btn btn-primary">Додати</button>
-        </form>
+<!-- А3: Додати добриво -->
+<div class="widget mt-4">
+    <h4>+ Додати нове добриво</h4>
+    <input type="text" id="fertilizer_name" class="form-control form-group mb-2" placeholder="Назва добрива" required>
+    <button type="button" class="btn btn-primary" onclick="addFertilizer(event)">Додати</button>
+</div>
 
-        <!-- А4: Зв'язати рід з добривом (через SQL-функцію) -->
-        <form method="post" action="{% url 'link_genus_fertilizer_sql' %}" class="widget mt-4">
-            {% csrf_token %}
-            <h4>Зв’язати рід з добривом</h4>
-            <input type="number" name="genus_id" class="form-control form-group mb-2" placeholder="ID роду" required>
-            <input type="number" name="fertilizer_id" class="form-control form-group mb-2" placeholder="ID добрива" required>
-            <button type="submit" class="btn btn-primary">Зв’язати</button>
-        </form>
+<!-- А4: Зв’язати рід з добривом (SQL функція) -->
+<div class="widget mt-4">
+    <h4>+ Зв’язати рід з добривом</h4>
+    <input type="number" id="link_genus_id" class="form-control form-group mb-2" placeholder="ID роду" required>
+    <input type="number" id="link_fertilizer_id" class="form-control form-group mb-2" placeholder="ID добрива" required>
+    <button type="button" class="btn btn-primary" onclick="linkGenusFertilizer(event)">Зв’язати</button>
+</div>
 
-        <!-- А5: Додати постачальника -->
-        <form method="post" action="{% url 'add_supplier' %}" class="widget mt-4">
-          {% csrf_token %}
-          <h4>+ Додати нового постачальника</h4>
-          <input type="text" name="supplier_name" class="form-control form-group mb-2" placeholder="Назва постачальника" required>
-          <input type="text" name="address" class="form-control form-group mb-2" placeholder="Адреса" required>
-          <input type="text" name="phone" class="form-control form-group mb-2" placeholder="Телефон" required>
-          <button type="submit" class="btn btn-primary">Додати постачальника</button>
-        </form>
+<!-- А5: Додати постачальника -->
+<div class="widget mt-4">
+    <h4>+ Додати нового постачальника</h4>
+    <input type="text" id="supplier_name" class="form-control form-group mb-2" placeholder="Назва постачальника"
+        required>
+    <input type="text" id="supplier_address" class="form-control form-group mb-2" placeholder="Адреса" required>
+    <input type="text" id="supplier_phone" class="form-control form-group mb-2" placeholder="Телефон" required>
+    <button type="button" class="btn btn-primary" onclick="addSupplier(event)">Додати</button>
+</div>
 
-        <!-- А6: Додати кур’єра (через SQL-функцію) -->
-        <form method="post" action="{% url 'add_courier_sql' %}" class="widget mt-4">
-            {% csrf_token %}
-            <h4>+ Додати нового кур’єра</h4>
-            <input type="text" name="first_name" class="form-control form-group mb-2" placeholder="Ім’я" required>
-            <input type="text" name="surname" class="form-control form-group mb-2" placeholder="Прізвище" required>
-            <input type="text" name="middle_name" class="form-control form-group mb-2" placeholder="По батькові">
-            <input type="text" name="phone" class="form-control form-group mb-2" placeholder="Телефон" required>
-            <input type="email" name="email" class="form-control form-group mb-2" placeholder="Email" required>
-            <input type="text" name="password" class="form-control form-group mb-2" placeholder="Пароль">
-            <button type="submit" class="btn btn-primary">Додати кур’єра</button>
-        </form>
-    </div>
-</section>
+<!-- А6: Додати кур’єра (SQL функція) -->
+<div class="widget mt-4">
+    <h4>+ Додати нового кур’єра</h4>
+    <input type="text" id="courier_first_name" class="form-control form-group mb-2" placeholder="Ім’я" required>
+    <input type="text" id="courier_surname" class="form-control form-group mb-2" placeholder="Прізвище" required>
+    <input type="text" id="courier_middle_name" class="form-control form-group mb-2" placeholder="По батькові">
+    <input type="text" id="courier_phone" class="form-control form-group mb-2" placeholder="Телефон" required>
+    <input type="email" id="courier_email" class="form-control form-group mb-2" placeholder="Email" required>
+    <input type="text" id="courier_password" class="form-control form-group mb-2" placeholder="Пароль (необов’язково)">
+    <button type="button" class="btn btn-primary" onclick="addCourier(event)">Додати</button>
+</div>
+{% endblock %}
 
-<footer class="footer text-center mt-5">
-    <div class="container">
-        <p class="copyright-text">© 2025 EVERGREEN</p>
-    </div>
-</footer>
-
+{% block worker_scripts %}
 <script src="{% static 'plugins/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/admin_panel.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
-</body>
-</html>
+{% endblock %}

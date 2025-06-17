@@ -32,3 +32,12 @@ def shop(request):
 
 def product_single(request):
     return render(request, 'flower_shop/product_single.html')
+
+def courier(request):
+    return render(request, 'flower_shop/courier_dashboard.html')
+
+def admin(request):
+    return render(request, 'flower_shop/admin_dashboard.html')
+
+def greenhouse(request):
+    return render(request, 'flower_shop/greenhouse_dashboard.html')

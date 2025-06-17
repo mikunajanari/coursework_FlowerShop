@@ -4,9 +4,6 @@ from django.db import connection
 import json
 from django.shortcuts import render
 
-def courier(request):
-    return render(request, 'flower_shop/courier_dashboard.html')
-
 @csrf_exempt
 def get_orders(request):
     today_orders = []

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import views
 from .views import courier_views
-from .views import admin_views
+from .views import admin_api
 from .views import greenhouse_views
 
 urlpatterns = [
@@ -17,22 +17,24 @@ urlpatterns = [
     path('shop/', views.shop, name='shop'),
     path('shop/product_single/', views.product_single, name='product_single'),
 
-    path('courier', courier_views.courier, name='courier_dashboard'),
+    path('courier', views.courier, name='courier_dashboard'),
+
     path('api/courier/orders', courier_views.get_orders, name='get_orders'),
     path('api/courier/accept/<int:order_id>', courier_views.accept_order, name='accept_order'),
     path('api/courier/complete/<int:order_id>', courier_views.complete_order, name='complete_order'),
 
-    path('admin', admin_views.admin, name='admin_dashboard'),
+    path('admin', views.admin, name='admin_dashboard'),
 
-    path('admin/add_genus/', admin_views.add_genus, name='add_genus'),
-    path('admin/add_species/', admin_views.add_species_sql, name='add_species_sql'),
-    path('admin/add_fertilizer/', admin_views.add_fertilizer, name='add_fertilizer'),
-    path('admin/link_genus_fertilizer/', admin_views.link_genus_fertilizer_sql, name='link_genus_fertilizer_sql'),
-    path('admin/add_supplier/', admin_views.add_supplier, name='add_supplier'),
-    path('admin/add_courier/', admin_views.add_courier_sql, name='add_courier_sql'),
+    path('api/admin/add_genus/', admin_api.add_genus, name='add_genus'),
+    path('api/admin/add_species_sql/', admin_api.add_species_sql, name='add_species_sql'),
+    path('api/admin/add_fertilizer/', admin_api.add_fertilizer, name='add_fertilizer'),
+    path('api/admin/link_genus_fertilizer_sql/', admin_api.link_genus_fertilizer_sql, name='link_genus_fertilizer_sql'),
+    path('api/admin/add_supplier/', admin_api.add_supplier, name='add_supplier'),
+    path('api/admin/add_courier_sql/', admin_api.add_courier_sql, name='add_courier_sql'),
+    path('api/admin/get_genera/', admin_api.get_genera, name='get_genera'),
 
-    # 🌿 Головна сторінка працівника теплиць
-    path('gardener', greenhouse_views.greenhouse, name='greenhouse_dashboard'),
+
+    path('gardener', views.greenhouse, name='greenhouse_dashboard'),
 
     # 🪴 Посадка
     path('api/species', greenhouse_views.list_species, name='get_species_list'),

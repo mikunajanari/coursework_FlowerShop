@@ -1,0 +1,350 @@
+{% extends "flower_shop/worker_base.html" %}
+{% load static %}
+
+{% block worker_title %}Панель Менеджера{% endblock %}
+{% block worker_role %}Менеджер{% endblock %}
+
+{% block worker_content %}
+
+      <form id="add-client-form">
+        <h4>Додати клієнта</h4>
+        <input class="form-control" placeholder="ПІБ" id="client-name" required>
+        <input class="form-control mt-2" placeholder="Телефон" id="client-phone" required>
+        <input class="form-control mt-2" placeholder="Email" id="client-email">
+        <input class="form-control mt-2" placeholder="Адреса доставки" id="client-a ddress">
+        <button type="submit" class="btn btn-success mt-3">➕ Додати клієнта</button>
+      </form>
+      <div id="client-result" class="mt-2"></div>
+
+      <script>
+        document.getElementById("add-client-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const body = {
+            name: clientName.value,
+            phone: clientPhone.value,
+            email: clientEmail.value,
+            address: clientAddress.value
+          };
+          fetch("/api/clients", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          }).then(res => res.json())
+            .then(data => {
+              clientResult.innerHTML = `✅ ID нового клієнта: ${data.id}`;
+            });
+        });
+      </script>
+
+      <form id="create-order-form">
+        <h4>📝 Створити замовлення</h4>
+        <label for="client-select">Оберіть клієнта:</label>
+        <select class="form-control" id="client-select">
+          <!-- Динамічно заповнюється з БД -->
+        </select>
+        <input type="date" class="form-control mt-2" id="order-date" required>
+        <button class="btn btn-primary mt-2">➕ Створити замовлення</button>
+      </form>
+      <div id="order-result" class="mt-2"></div>
+
+      <script>
+        document.getElementById("create-order-form").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const body = {
+            clientId: orderClientId.value,
+            deliveryDate: orderDate.value
+          };
+          fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          }).then(res => res.json())
+            .then(data => {
+              orderResult.innerHTML = `🧾 ID замовлення: ${data.id}`;
+            });
+        });
+        // Підгрузка клієнтів з бекенду
+        fetch('/api/clients')
+          .then(res => res.json())
+          .then(data => {
+            const select = document.getElementById("client-select");
+            data.forEach(client => {
+              const option = document.createElement("option");
+              option.value = client.id;
+              option.textContent = `${client.name} | ${client.phone}`;
+              select.appendChild(option);
+            });
+          });
+
+      </script>
+
+      <form id="add-item-form">
+        <h4>🌼 Додати товар до замовлення</h4>
+        <table id="orders-table" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Номер</th>
+              <th>Клієнт</th>
+              <th>Дата</th>
+              <th>Дія</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+        <label for="flower-select">Оберіть квітку:</label>
+        <select class="form-control" id="flower-select">
+          <!-- Динамічно -->
+        </select>
+        <input type="number" class="form-control mt-2" placeholder="Кількість" id="item-qty" required>
+        <button class="btn btn-warning mt-2">➕ Додати товар</button>
+      </form>
+      <div id="item-result" class="mt-2"></div>
+
+      <script>
+        fetch('/api/flowers')
+          .then(res => res.json())
+          .then(data => {
+            const select = document.getElementById("flower-select");
+            data.forEach(flower => {
+              const option = document.createElement("option");
+              option.value = flower.id; // або `${flower.name}|${flower.sort}`
+              option.textContent = `${flower.name} - ${flower.sort} (${flower.qty}шт)`;
+              select.appendChild(option);
+            });
+          });
+      </script>
+
+      <form id="check-stock-form">
+        <h4>🔍 Перевірити наявність</h4>
+        <label for="flower-select">Оберіть квітку:</label>
+        <select class="form-control" id="flower-select">
+          <!-- Динамічно -->
+        </select>
+        <button class="btn btn-info mt-2">🔍 Пошук</button>
+      </form>
+      <div id="stock-result" class="mt-2"></div>
+
+      <form id="track-order-form">
+        <h4>📦 Статус замовлення</h4>
+        <input class="form-control" placeholder="Номер замовлення" id="track-order-id" required>
+        <table id="orders-table" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Номер</th>
+              <th>Клієнт</th>
+              <th>Дата</th>
+              <th>Дія</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </form>
+      <div id="track-result" class="mt-2"></div>
+
+      <form id="season-stats-form">
+        <h4>🌤 Статистика по сезонах</h4>
+        <input class="form-control" type="number" min="2020" id="season-year" required
+          placeholder="Рік (наприклад, 2024)">
+        <button class="btn btn-outline-success mt-2">📊 Отримати</button>
+      </form>
+      <div id="season-result" class="mt-2"></div>
+
+      <form id="client-pref-form">
+        <h4>💖 Аналіз вподобань</h4>
+        <label for="client-select">Оберіть клієнта:</label>
+        <select class="form-control" id="client-select">
+          <!-- Динамічно заповнюється з БД -->
+        </select>
+        <button class="btn btn-outline-warning mt-2">📈 Аналіз</button>
+      </form>
+      <div id="pref-result" class="mt-2"></div>
+
+      <form id="top-clients-form">
+        <h4>🏆 Топ клієнтів</h4>
+        <input type="date" class="form-control" id="top-start" required>
+        <input type="date" class="form-control mt-2" id="top-end" required>
+        <button class="btn btn-dark mt-2">📋 Показати</button>
+      </form>
+      <div id="top-clients-result" class="mt-2"></div>
+{% endblock %}
+
+{% block worker_scripts %}
+  <script>
+    let clients = []; // Тут буде список з бекенду
+    let currentPage = 1;
+
+    async function fetchClients(search = '', limit = 10, page = 1) {
+      // 👇 Тут має бути твій fetch з бекенду (наприклад через API)
+      // Поки що — заглушка:
+      const response = await fetch(`/api/clients?search=${search}&limit=${limit}&page=${page}`);
+      const data = await response.json(); // [{id, name, phone, email, address}]
+      clients = data.clients || [];
+      renderClientTable(clients);
+      renderPagination(data.total, limit, page);
+    }
+
+    function renderClientTable(clients) {
+      const tbody = document.getElementById("client-table-body");
+      tbody.innerHTML = "";
+      for (const c of clients) {
+        const row = `<tr>
+        <td>${c.id}</td>
+        <td>${c.name}</td>
+        <td>${c.phone}</td>
+        <td>${c.email}</td>
+        <td>${c.address}</td>
+      </tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
+      }
+    }
+
+    function renderPagination(total, limit, page) {
+      const pages = Math.ceil(total / limit);
+      const pagination = document.getElementById("pagination");
+      pagination.innerHTML = "";
+      for (let i = 1; i <= pages; i++) {
+        const li = document.createElement("li");
+        li.className = `page-item ${i === page ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        li.onclick = (e) => {
+          e.preventDefault();
+          currentPage = i;
+          fetchClients(document.getElementById("search-client").value, parseInt(document.getElementById("client-limit").value), i);
+        };
+        pagination.appendChild(li);
+      }
+    }
+
+    // 🔍 Пошук
+    document.getElementById("search-client").addEventListener("input", () => {
+      fetchClients(document.getElementById("search-client").value, parseInt(document.getElementById("client-limit").value), 1);
+    });
+
+    // ⏫ Ліміт на сторінку
+    document.getElementById("client-limit").addEventListener("change", () => {
+      fetchClients(document.getElementById("search-client").value, parseInt(document.getElementById("client-limit").value), 1);
+    });
+
+    // ➕ Додати клієнта
+    document.getElementById("add-client-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const client = {
+        name: document.getElementById("new-client-name").value,
+        phone: document.getElementById("new-client-phone").value,
+        email: document.getElementById("new-client-email").value,
+        address: document.getElementById("new-client-address").value
+      };
+
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(client)
+      });
+
+      const newClient = await res.json(); // очікуємо {id, ...}
+
+      const msg = document.getElementById("client-added-msg");
+      msg.classList.remove("d-none");
+      msg.innerText = `Клієнта створено! ID: ${newClient.id}`;
+
+      // Оновити таблицю
+      fetchClients('', parseInt(document.getElementById("client-limit").value), currentPage);
+      e.target.reset();
+    });
+
+    // 🚀 Початковий рендер
+    fetchClients();
+  </script>
+
+  <script>
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("delivery-date").setAttribute("min", today);
+
+    const flowerList = [];
+
+    document.getElementById("add-flower-btn").addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const genus = document.getElementById("flower-genus").value.trim();
+      const species = document.getElementById("flower-species").value.trim();
+      const quantity = document.getElementById("flower-quantity").value;
+
+      if (!genus || !species || !quantity || quantity <= 0) {
+        alert("Будь ласка, заповни всі поля правильно!");
+        return;
+      }
+
+      const table = document.getElementById("order-table").querySelector("tbody");
+      const row = table.insertRow();
+      row.innerHTML = `
+      <td>${genus}</td>
+      <td>${species}</td>
+      <td>${quantity}</td>
+      <td><button class="btn btn-danger btn-sm remove-row">✖</button></td>
+    `;
+
+      flowerList.push({ genus, species, quantity });
+
+      // Очистити поля
+      document.getElementById("flower-genus").value = "";
+      document.getElementById("flower-species").value = "";
+      document.getElementById("flower-quantity").value = "";
+    });
+
+    document.getElementById("order-table").addEventListener("click", function (e) {
+      if (e.target.classList.contains("remove-row")) {
+        const row = e.target.closest("tr");
+        const index = row.rowIndex - 1;
+        row.remove();
+        flowerList.splice(index, 1);
+      }
+    });
+
+    document.getElementById("submit-order-btn").addEventListener("click", function () {
+      const clientId = document.getElementById("client-id").value.trim();
+      const deliveryDate = document.getElementById("delivery-date").value;
+
+      if (!clientId || !deliveryDate) {
+        alert("Заповни інформацію про клієнта і дату доставки!");
+        return;
+      }
+
+      if (flowerList.length === 0) {
+        alert("Ти ж не додав жодної квітки до замовлення! 🌸");
+        return;
+      }
+
+      const orderData = {
+        clientId,
+        deliveryDate,
+        flowers: flowerList
+      };
+
+      console.log("Нове замовлення:", orderData);
+
+      alert("Замовлення створено! (Поки що тільки в консолі 🧪)");
+      // Тут ти можеш зробити реальний POST-запит через fetch()
+    });
+  </script>
+
+  <script src="plugins/jquery/dist/jquery.min.js"></script>
+  <script src="plugins/bootstrap/js/bootstrap.min.js"></script>
+
+  <script>
+  // Показуємо роль
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role) {
+    document.getElementById("user-role").textContent =
+      user.role.charAt(0).toUpperCase() + user.role.slice(1);
+  }
+
+  // Обробка кнопки "Вийти"
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    const confirmed = confirm("Ви точно хочете вийти зі свого облікового запису?");
+    if (confirmed) {
+      localStorage.removeItem("user");
+      window.location.href = "index.html";
+    }
+  });
+</script>
+{% endblock %}

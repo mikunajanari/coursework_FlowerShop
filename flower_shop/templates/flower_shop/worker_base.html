@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <title>{% block worker_title %}Панель робітника{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block worker_head %}{% endblock %}
+</head>
+<body>
+  <!-- Шапка -->
+  <section class="top-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">📞 Контакти: +380-00-000-0000</div>
+        <div class="col-md-4 text-center"><strong>EVERGREEN</strong></div>
+        <div class="col-md-4 text-right">
+          <span>👤 <span id="user-role">{% block worker_role %}Робітник{% endblock %}</span></span>
+          <button class="btn btn-sm btn-outline-danger ml-2" id="logout-btn">Вийти</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контент -->
+  <section class="section">
+    <div class="container">
+      {% block worker_content %}{% endblock %}
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer class="footer text-center">
+    <div class="container">
+      <p class="copyright-text">© 2025 EVERGREEN</p>
+    </div>
+  </footer>
+
+  {% block worker_scripts %}{% endblock %}
+</body>
+</html>
