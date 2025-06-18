@@ -2,7 +2,8 @@ from django.urls import path
 from .views import views
 from .views import courier_views
 from .views import admin_api
-from .views import greenhouse_views
+from .views import greenhouse_api
+from .views import accountant_api
 
 urlpatterns = [
     path(r'', views.home, name='index'),
@@ -36,16 +37,17 @@ urlpatterns = [
 
     path('gardener', views.greenhouse, name='greenhouse_dashboard'),
 
-    # 🪴 Посадка
-    path('api/species', greenhouse_views.list_species, name='get_species_list'),
-    path('api/plants/plant-with-fertilizer', greenhouse_views.plant_with_fertilizer, name='plant_with_fertilizer'),
-    path('api/fertilizer/grouped', greenhouse_views.get_grouped_fertilizers, name='get_grouped_fertilizers'),
+    path('api/species', greenhouse_api.list_species),
+    path('api/plants/unready', greenhouse_api.list_unready_plants),
+    path('api/plants/available_for_writeoff', greenhouse_api.list_available_for_writeoff),
+    path('api/fertilizer/grouped', greenhouse_api.get_grouped_fertilizers),
+    path('api/plants/plant-with-fertilizer', greenhouse_api.plant_with_fertilizer),
+    path('api/plants/mark-ready', greenhouse_api.mark_ready),
+    path('api/plants/writeoff', greenhouse_api.write_off),
 
-    # ✅ Готовність до продажу
-    path('api/plants/unready', greenhouse_views.list_unready_plants, name='get_unready_plants'),
-    path('api/plants/mark-ready', greenhouse_views.mark_ready, name='mark_ready'),
+    path('accountant', views.accountant, name='accountant_dashboard'),
 
-    # 🗑️ Списання
-    path('api/plants/all-for-writeoff', greenhouse_views.list_available_for_writeoff, name='get_all_plants_for_writeoff'),
-    path('api/plants/write-off', greenhouse_views.write_off, name='write_off_flowers'),
+    path('api/fertilizers', accountant_api.list_fertilizers),
+    path('api/suppliers', accountant_api.list_suppliers),
+    path('api/fertilizers/order', accountant_api.order_fertilizer_api),
 ]
