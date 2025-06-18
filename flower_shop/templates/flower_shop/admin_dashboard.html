@@ -11,67 +11,91 @@
 <div class="widget mt-4">
     <h4>+ Додати новий рід квітів</h4>
     <input type="text" id="genus_name" class="form-control form-group mb-2" placeholder="Назва роду" required>
-    <button type="button" class="btn btn-primary" onclick="addGenus(event)">Додати</button>
+    <button type="button" class="btn btn-primary" id="genus_btn" onclick="addGenus(event)" disabled>Додати</button>
 </div>
 
 <!-- А2: Додати вид (SQL функція) -->
 <div class="widget mt-4">
     <h4>+ Додати новий вид квітів</h4>
-    <input type="text" id="species_name" class="form-control form-group mb-2" placeholder="Назва виду" required>
+    <input type="text" id="species_name" class="form-control form-group mb-2" placeholder="Назва виду" maxlength="30"
+        required>
     <select id="species_genus_name" class="form-control form-group mb-2" required>
         <option value="">Оберіть рід...</option>
         <!-- Варіанти будуть додані JS-ом -->
     </select>
-    <input type="text" id="species_instructions" class="form-control form-group mb-2"
-        placeholder="Інструкція з догляду" required>
+    <small class="text-muted d-block mb-2">Максимум 500 символів</small>
+    <textarea id="species_instructions" class="form-control form-group mb-2" placeholder="Інструкція з догляду"
+        maxlength="500" required></textarea>
     <input type="number" id="species_storage_period" class="form-control form-group mb-2"
         placeholder="Термін зберігання (місяців)" min="1" required>
     <input type="text" id="species_photo_link" class="form-control form-group mb-2"
         placeholder="Посилання на зображення" required>
-    <button type="button" class="btn btn-primary" onclick="addSpecies(event)">Додати</button>
+    <button type="button" class="btn btn-primary" id="species_btn" onclick="addSpecies(event)" disabled>Додати</button>
 </div>
 
 <!-- А3: Додати добриво -->
 <div class="widget mt-4">
     <h4>+ Додати нове добриво</h4>
-    <input type="text" id="fertilizer_name" class="form-control form-group mb-2" placeholder="Назва добрива" required>
-    <button type="button" class="btn btn-primary" onclick="addFertilizer(event)">Додати</button>
+    <input type="text" id="fertilizer_name" class="form-control form-group mb-2" placeholder="Назва добрива"
+        maxlength="30" required>
+    <button type="button" class="btn btn-primary" id="fertilizer_btn" onclick="addFertilizer(event)"
+        disabled>Додати</button>
 </div>
 
 <!-- А4: Зв’язати рід з добривом (SQL функція) -->
 <div class="widget mt-4">
     <h4>+ Зв’язати рід з добривом</h4>
-    <input type="number" id="link_genus_id" class="form-control form-group mb-2" placeholder="ID роду" required>
-    <input type="number" id="link_fertilizer_id" class="form-control form-group mb-2" placeholder="ID добрива" required>
-    <button type="button" class="btn btn-primary" onclick="linkGenusFertilizer(event)">Зв’язати</button>
+    <select id="link_genus_id" class="form-control form-group mb-2" required>
+        <option value="">Оберіть рід...</option>
+        <!-- Варіанти підвантажуються JS -->
+    </select>
+    <select id="link_fertilizer_id" class="form-control form-group mb-2" required>
+        <option value="">Оберіть добриво...</option>
+        <!-- Варіанти підвантажуються JS -->
+    </select>
+    <button type="button" class="btn btn-primary" id="link_btn" onclick="linkGenusFertilizer(event)"
+        disabled>Зв’язати</button>
 </div>
 
 <!-- А5: Додати постачальника -->
 <div class="widget mt-4">
     <h4>+ Додати нового постачальника</h4>
     <input type="text" id="supplier_name" class="form-control form-group mb-2" placeholder="Назва постачальника"
+        maxlength="50" required>
+    <input type="text" id="supplier_city" class="form-control form-group mb-2" placeholder="Місто" maxlength="30"
         required>
-    <input type="text" id="supplier_address" class="form-control form-group mb-2" placeholder="Адреса" required>
-    <input type="text" id="supplier_phone" class="form-control form-group mb-2" placeholder="Телефон" required>
-    <button type="button" class="btn btn-primary" onclick="addSupplier(event)">Додати</button>
+    <input type="text" id="supplier_street" class="form-control form-group mb-2" placeholder="Вулиця" maxlength="50"
+        required>
+    <input type="number" id="supplier_house" class="form-control form-group mb-2" placeholder="Будинок" min="1"
+        required>
+    <input type="number" id="supplier_flat" class="form-control form-group mb-2" placeholder="Квартира" min="1"
+        required>
+    <input type="text" id="supplier_phone" class="form-control form-group mb-2" placeholder="Телефон" maxlength="20"
+        required>
+    <button type="button" class="btn btn-primary" id="supplier_btn" onclick="addSupplier(event)"
+        disabled>Додати</button>
 </div>
 
 <!-- А6: Додати кур’єра (SQL функція) -->
 <div class="widget mt-4">
     <h4>+ Додати нового кур’єра</h4>
-    <input type="text" id="courier_first_name" class="form-control form-group mb-2" placeholder="Ім’я" required>
-    <input type="text" id="courier_surname" class="form-control form-group mb-2" placeholder="Прізвище" required>
-    <input type="text" id="courier_middle_name" class="form-control form-group mb-2" placeholder="По батькові">
-    <input type="text" id="courier_phone" class="form-control form-group mb-2" placeholder="Телефон" required>
+    <input type="text" id="courier_first_name" class="form-control form-group mb-2" placeholder="Ім’я" maxlength="50"
+        required>
+    <input type="text" id="courier_surname" class="form-control form-group mb-2" placeholder="Прізвище" maxlength="50"
+        required>
+    <input type="text" id="courier_middle_name" class="form-control form-group mb-2" placeholder="По батькові"
+        maxlength="50">
+    <input type="text" id="courier_phone" class="form-control form-group mb-2" placeholder="Телефон" maxlength="20"
+        required>
     <input type="email" id="courier_email" class="form-control form-group mb-2" placeholder="Email" required>
-    <input type="text" id="courier_password" class="form-control form-group mb-2" placeholder="Пароль (необов’язково)">
-    <button type="button" class="btn btn-primary" onclick="addCourier(event)">Додати</button>
+    <input type="text" id="courier_password" class="form-control form-group mb-2" placeholder="Пароль" required>
+    <button type="button" class="btn btn-primary" id="courier_btn" onclick="addCourier(event)" disabled>Додати</button>
 </div>
 {% endblock %}
 
 {% block worker_scripts %}
 <script src="{% static 'plugins/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/admin_panel.js' %}"></script>
+<script src="{% static 'js/admin_panel.js' %}" defer></script>
 <script src="{% static 'js/script.js' %}"></script>
 {% endblock %}

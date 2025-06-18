@@ -77,8 +77,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'FlowerSystem',
-        'USER': 'shop_admin',
-        'PASSWORD': 'admin',
+                'USER': 'daria',
+        'PASSWORD': 'daria_bryz',
+
         'HOST': 'localhost',
         'PORT': '5432',
     }

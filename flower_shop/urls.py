@@ -32,7 +32,7 @@ urlpatterns = [
     path('api/admin/add_supplier/', admin_api.add_supplier, name='add_supplier'),
     path('api/admin/add_courier_sql/', admin_api.add_courier_sql, name='add_courier_sql'),
     path('api/admin/get_genera/', admin_api.get_genera, name='get_genera'),
-
+    path('api/admin/get_fertilizers/', admin_api.get_fertilizers, name='get_fertilizers'),
 
     path('gardener', views.greenhouse, name='greenhouse_dashboard'),
 

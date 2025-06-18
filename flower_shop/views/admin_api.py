@@ -27,6 +27,12 @@ def get_genera(request):
         genera = [row[0] for row in cursor.fetchall()]
     return JsonResponse({'genera': genera})
 
+def get_fertilizers(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT fertilizer_name FROM Fertilizers ORDER BY fertilizer_name")
+        fertilizers = [row[0] for row in cursor.fetchall()]
+    return JsonResponse({'fertilizers': fertilizers})
+
 @csrf_exempt
 def add_species_sql(request):
     if request.method == 'POST':
@@ -55,7 +61,7 @@ def add_fertilizer(request):
         data = json.loads(request.body)
         fertilizer_name = data.get('fertilizer_name')
         with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO Fertilizer (fertilizer_name) VALUES (%s)", [fertilizer_name])
+            cursor.execute("INSERT INTO Fertilizers (fertilizer_name) VALUES (%s)", [fertilizer_name])
         return JsonResponse({'message': 'Добриво додано!'})
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
@@ -63,9 +69,21 @@ def add_fertilizer(request):
 def link_genus_fertilizer_sql(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        genus_id = data.get('genus_id')
-        fertilizer_id = data.get('fertilizer_id')
+        genus_name = data.get('genus_name')
+        fertilizer_name = data.get('fertilizer_name')
         with connection.cursor() as cursor:
+            # Знайти id роду за назвою
+            cursor.execute("SELECT g_kod FROM Genera WHERE genus_name = %s", [genus_name])
+            row = cursor.fetchone()
+            if not row:
+                return JsonResponse({'error': 'Рід не знайдено!'}, status=400)
+            genus_id = row[0]
+            # Знайти id добрива за назвою
+            cursor.execute("SELECT fe_kod FROM Fertilizers WHERE fertilizer_name = %s", [fertilizer_name])
+            row = cursor.fetchone()
+            if not row:
+                return JsonResponse({'error': 'Добриво не знайдено!'}, status=400)
+            fertilizer_id = row[0]
             cursor.execute("SELECT link_genus_fertilizer(%s, %s)", [genus_id, fertilizer_id])
         return JsonResponse({'message': 'Звʼязок додано!'})
     return JsonResponse({'error': 'Invalid method'}, status=405)
@@ -75,12 +93,15 @@ def add_supplier(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         supplier_name = data.get('supplier_name')
-        address = data.get('address')
+        city = data.get('city')
+        street = data.get('street')
+        house = data.get('house')
+        flat = data.get('flat')
         phone = data.get('phone')
         with connection.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO Supplier (supplier_name, address, phone) VALUES (%s, %s, %s)",
-                [supplier_name, address, phone]
+                "INSERT INTO Suppliers (supplier_name, address, phone_number) VALUES (%s, ROW(%s, %s, %s, %s)::Address, %s)",
+                [supplier_name, city, street, house, flat, phone]
             )
         return JsonResponse({'message': 'Постачальника додано!'})
     return JsonResponse({'error': 'Invalid method'}, status=405)

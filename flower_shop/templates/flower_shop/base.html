@@ -48,53 +48,26 @@
                 <div class="col-md-4 col-xs-12 col-sm-4">
                     <ul class="top-menu text-right list-inline">
                         <!-- Cart -->
-                        <li class="dropdown cart-nav dropdown-slide">
-                            <a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
-                                    class="tf-ion-android-cart"></i>Кошик</a>
-                            <div class="dropdown-menu cart-dropdown">
-                                <!-- Cart Item -->
-                                <div class="media">
-                                    <a class="pull-left" href="#!">
-                                        <img class="media-object" src="images/shop/cart/cart-1.jpg" alt="image" />
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading"><a href="#!">One</a></h4>
-                                        <div class="cart-price">
-                                            <span>1 x</span>
-                                            <span>1250.00</span>
-                                        </div>
-                                        <h5><strong>$1200</strong></h5>
-                                    </div>
-                                    <a href="#!" class="remove"><i class="tf-ion-close"></i></a>
-                                </div><!-- / Cart Item -->
-                                <!-- Cart Item -->
-                                <div class="media">
-                                    <a class="pull-left" href="#!">
-                                        <img class="media-object" src="images/shop/cart/cart-2.jpg" alt="image" />
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading"><a href="#!">Two</a></h4>
-                                        <div class="cart-price">
-                                            <span>1 x</span>
-                                            <span>1250.00</span>
-                                        </div>
-                                        <h5><strong>$1200</strong></h5>
-                                    </div>
-                                    <a href="#!" class="remove"><i class="tf-ion-close"></i></a>
-                                </div><!-- / Cart Item -->
+						<li class="dropdown cart-nav dropdown-slide">
+							<a href="{% url 'cart' %}" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+								<i class="tf-ion-android-cart"></i>Кошик (<span class="cart-counter">0</span>)
+							</a>
+							<div class="dropdown-menu cart-dropdown">
+								<div class="media-area">
+									<!-- Cart items will be inserted here -->
+								</div>
+								<div class="cart-summary">
+									<span>Всього</span>
+									<span class="total-price">$0.00</span>
+								</div>
+								<ul class="text-center cart-buttons">
+									<li><a href="{% url 'cart' %}" class="btn btn-small">Переглянути</a></li>
+									<li><a href="{% url 'checkout' %}" class="btn btn-small btn-solid-border">Оформити</a>
+									</li>
+								</ul>
+							</div>
 
-                                <div class="cart-summary">
-                                    <span>Загалом</span>
-                                    <span class="total-price">$1799.00</span>
-                                </div>
-                                <ul class="text-center cart-buttons">
-                                    <li><a href="{% url 'cart' %}" class="btn btn-small">Переглянути</a></li>
-                                    <li><a href="{% url 'checkout' %}"
-                                            class="btn btn-small btn-solid-border">Оформити</a></li>
-                                </ul>
-                            </div>
-
-                        </li><!-- / Cart -->
+						</li><!-- / Cart -->
 
                         <!-- Search -->
                         <li class="dropdown search dropdown-slide">
@@ -210,6 +183,7 @@
     <script src="{% static 'plugins/slick/slick.min.js' %}"></script>
     <script src="{% static 'plugins/slick/slick-animation.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}"></script>
 </body>
 
 </html>

@@ -1,101 +1,90 @@
 {% extends "flower_shop/base.html" %}
+{% load static %}
 
-{% block title %}EVERGREEN About{% endblock %}
+{% block title %}EVERGREEN Checkout{% endblock %}
 
 {% block content %}
+<!-- Breadcrumb and Title -->
 <section class="page-header">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="content">
-					<h1 class="page-name">Оплата</h1>
-					<ol class="breadcrumb">
-						<li><a href="{% url 'index' %}">Головна</a></li>
-						<li class="active">оплата</li>
-					</ol>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="content">
+                    <h1 class="page-name">Оплата</h1>
+                    <ol class="breadcrumb">
+                        <li><a href="{% url 'index' %}">Головна</a></li>
+                        <li class="active">Оплата</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+
+<!-- Checkout Content -->
 <div class="page-wrapper">
-	<div class="checkout shopping">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-8">
-					<div class="block billing-details">
-						<h4 class="widget-title">Деталі платежу</h4>
-						<form class="checkout-form">
-							<div class="form-group">
-								<label for="name">Ім'я</label>
-								<input type="text" class="form-control" id="name" placeholder="">
-							</div>
-							<div class="form-group">
-								<label for="surname">Прізвище</label>
-								<input type="text" class="form-control" id="surname" placeholder="">
-							</div>
-							<div class="form-group">
-								<label for="user_city">Місто</label>
-								<input type="text" class="form-control" id="user_city" placeholder="">
-							</div>
-							<div class="form-group">
-								<label for="user_street">Вулиця</label>
-								<input type="text" class="form-control" id="user_street" placeholder="">
-							</div>
-							<div class="form-group">
-								<label for="user_house">Будинок</label>
-								<input type="text" class="form-control" id="user_house" placeholder="">
-							</div>
-							<div class="form-group">
-								<label for="user_flat">Квартира</label>
-								<input type="text" class="form-control" id="user_flat" placeholder="">
-							</div>
-						</form>
-					</div>
-					<div class="block">
-						<h4 class="widget-title">Спосіб оплати: при отримані</h4>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-checkout-details">
-						<div class="block">
-							<h4 class="widget-title">Підсумок замовлення</h4>
-							<div class="media product-card">
-								<a class="pull-left" href="product-single.html">
-									<img class="media-object" src="images/shop/cart/cart-1.jpg" alt="Image" />
-								</a>
-								<div class="media-body">
-									<h4 class="media-heading"><a href="product-single.html">One</a></h4>
-									<p class="price">1 x $249</p>
-									<span class="remove">Прибрати</span>
-								</div>
-							</div>
-							<ul class="summary-prices">
-								<li>
-									<span>Доставка:</span>
-									<span>Безкоштовно</span>
-								</li>
-							</ul>
-							<div class="summary-total">
-								<span>Всього</span>
-								<span>$250</span>
-							</div>
-
-							<!-- Кнопка підтвердження замовлення -->
-							<button id="confirm-order-btn" class="btn btn-main btn-block mt-20">Підтвердити
-								замовлення</button>
-
-							<script>
-								document.getElementById('confirm-order-btn').addEventListener('click', function () {
-									window.location.href = "{% url 'confirmation' %}";
-								});
-							</script>
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="checkout shopping">
+        <div class="container">
+            <div class="row">
+                <!-- Форма -->
+                <div class="col-md-8">
+                    <div class="block billing-details">
+                        <h4 class="widget-title">Деталі платежу</h4>
+                        <form class="checkout-form">
+                            <div class="form-group">
+                                <label for="name">Ім'я</label>
+                                <input type="text" class="form-control" id="name" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="surname">Прізвище</label>
+                                <input type="text" class="form-control" id="surname" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_city">Місто</label>
+                                <input type="text" class="form-control" id="user_city" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_street">Вулиця</label>
+                                <input type="text" class="form-control" id="user_street" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_house">Будинок</label>
+                                <input type="text" class="form-control" id="user_house" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_flat">Квартира</label>
+                                <input type="text" class="form-control" id="user_flat" placeholder="">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="block">
+                        <h4 class="widget-title">Спосіб оплати: при отриманні</h4>
+                    </div>
+                </div>
+                <!-- Підсумок замовлення -->
+                <div class="col-md-4">
+                    <div class="product-checkout-details">
+                        <div class="block">
+                            <h4 class="widget-title">Підсумок замовлення</h4>
+                            <div class="product-cards">
+                                <!-- Динамічний список товарів -->
+                            </div>
+                            <ul class="summary-prices">
+                                <li>
+                                    <span>Доставка:</span>
+                                    <span>Безкоштовно</span>
+                                </li>
+                            </ul>
+                            <div class="summary-total">
+                                <span>Всього</span>
+                                <span>$0.00</span>
+                            </div>
+                            <button id="confirm-order-btn" class="btn btn-main btn-block mt-20">Підтвердити замовлення</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

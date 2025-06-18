@@ -289,6 +289,7 @@ class GenusFertilizer(models.Model):
     class Meta:
         managed = False
         db_table = 'genus_fertilizer'
+        unique_together = (('genus', 'fertilizer'),)
     
     def __str__(self):
         return f"{self.genus.genus_name} — {self.fertilizer.fertilizer_name}"
