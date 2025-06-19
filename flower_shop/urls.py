@@ -64,4 +64,11 @@ urlpatterns = [
     path('api/flowers/check-stock', manager_api.check_stock),
     path('api/orders/track', manager_api.track_order),
     path('api/orders/list', manager_api.list_orders_by_client),
+    path('api/orders/monthly-trends', manager_api.monthly_order_trends),
+    path('api/genus/ranking', manager_api.genus_ranking),
+    path('api/flowers/demand', manager_api.flower_demand),
+    path('api/seasons/stats', manager_api.season_stats),
+    path('api/clients/preferences', manager_api.client_preferences),
+    path('api/couriers/performance', manager_api.courier_performance),
+    path('api/species/most-popular', manager_api.most_popular_species),
 ]

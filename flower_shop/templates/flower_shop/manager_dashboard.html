@@ -1,5 +1,6 @@
 {% extends "flower_shop/worker_base.html" %}
 {% load static %}
+{% now "Y" as current_year %}
 
 {% block worker_title %}Панель Менеджера{% endblock %}
 {% block worker_role %}Менеджер{% endblock %}
@@ -125,12 +126,90 @@
 
 <hr class="my-5">
 
-<form id="season-stats-form">
-  <h4>🌤 Статистика по сезонах</h4>
-  <input class="form-control" type="number" min="2020" id="season-year" required placeholder="Рік (наприклад, 2024)">
-  <button class="btn btn-outline-success mt-2">📊 Отримати</button>
+<h4 class="mt-5">📈 Тенденції замовлень по місяцях</h4>
+<table class="table table-bordered" id="monthly-trends-table">
+  <thead>
+    <tr>
+      <th>Місяць</th>
+      <th>Доставлено</th>
+      <th>Всього</th>
+      <th>Тренд (всього)</th>
+      <th>Тренд (доставлено)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<hr class="my-5">
+
+<h4 class="mt-5">🏆 Рейтинг родів</h4>
+<table class="table table-bordered" id="genus-ranking-table">
+  <thead>
+    <tr>
+      <th>Рід</th>
+      <th>Місце за кількістю посаджених</th>
+      <th>Місце за витратами на добриво</th>
+      <th>Місце за доходом</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<hr class="my-5">
+
+<h4 class="mt-5">Попит на квіти за період</h4>
+<form id="flower-demand-form" class="mb-4">
+  <div class="row">
+    <div class="col-md-4">
+      <label>Дата початку:</label>
+      <input type="date" class="form-control" id="demand-start" required>
+    </div>
+    <div class="col-md-4">
+      <label>Дата закінчення:</label>
+      <input type="date" class="form-control" id="demand-end" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 offset-md-8">
+      <button class="btn btn-primary w-100" type="submit" style="margin-top: 10px; margin-bottom: 20px;">Показати попит</button>
+    </div>
+  </div>
 </form>
-<div id="season-result" class="mt-2"></div>
+<table class="table table-bordered" id="flower-demand-table">
+  <thead>
+    <tr>
+      <th>Вид</th>
+      <th>Рід</th>
+      <th>Продано</th>
+      <th>% від усіх</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<hr class="my-5">
+
+<h4 class="mt-5">📅 Статистика за сезонами</h4>
+<form id="season-stats-form" class="mb-3">
+  <div class="row">
+    <div class="col-md-4">
+      <label for="season-year">Рік:</label>
+      <input type="number" class="form-control" id="season-year"
+             min="2000"
+             max="{{ current_year }}"
+             required
+             placeholder="Введіть рік">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 offset-md-8">
+      <button class="btn btn-success w-100" type="submit" style="margin-top: 10px; margin-bottom: 20px;">Отримати</button>
+    </div>
+  </div>
+</form>
+<div id="season-result"></div>
+
+<hr class="my-5">
 
 <form id="client-pref-form">
   <h4>💖 Аналіз вподобань</h4>
@@ -142,13 +221,41 @@
 </form>
 <div id="pref-result" class="mt-2"></div>
 
-<form id="top-clients-form">
-  <h4>🏆 Топ клієнтів</h4>
-  <input type="date" class="form-control" id="top-start" required>
-  <input type="date" class="form-control mt-2" id="top-end" required>
-  <button class="btn btn-dark mt-2">📋 Показати</button>
+<hr class="my-5">
+
+<h4 class="mt-5">🚚 Аналіз працездатності кур’єрів</h4>
+<form id="courier-performance-form" class="mb-3">
+  <div class="row">
+    <div class="col-md-4">
+      <label>Дата початку:</label>
+      <input type="date" class="form-control" id="courier-start" required>
+    </div>
+    <div class="col-md-4">
+      <label>Дата закінчення:</label>
+      <input type="date" class="form-control" id="courier-end" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 offset-md-8">
+      <button class="btn btn-info w-100 mt-3 mb-3" type="submit">Аналіз</button>
+    </div>
+  </div>
 </form>
-<div id="top-clients-result" class="mt-2"></div>
+<div id="courier-performance-result"></div>
+
+<hr class="my-5">
+
+<h4 class="mt-5">Найпопулярніші квіти в кожному роді</h4>
+<table class="table table-bordered" id="most-popular-species-table">
+  <thead>
+    <tr>
+      <th>Рід</th>
+      <th>Вид</th>
+      <th>Продано</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 {% endblock %}
 
 {% block worker_scripts %}

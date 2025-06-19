@@ -91,6 +91,17 @@ document.addEventListener("DOMContentLoaded", function () {
             trackClientList.appendChild(opt);
           });
         }
+        // Для аналізу вподобань
+        const clientSelect = document.getElementById("client-select");
+        if (clientSelect) {
+          clientSelect.innerHTML = '<option value="" disabled selected hidden>Оберіть клієнта</option>';
+          data.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.id;
+            opt.textContent = `${c.surname} ${c.first_name} ${c.middle_name} (${c.email})`;
+            clientSelect.appendChild(opt);
+          });
+        }
       });
   }
   fetchClients();
@@ -327,4 +338,196 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("track-result").textContent = data.error || "Помилка";
     }
   });
+
+  fetch("/api/orders/monthly-trends")
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#monthly-trends-table tbody");
+      tbody.innerHTML = "";
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Даних немає</td></tr>';
+        return;
+      }
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+        <td>${row.month}</td>
+        <td>${row.delivered}</td>
+        <td>${row.total}</td>
+        <td>${row.total_trend}</td>
+        <td>${row.delivered_trend}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+    });
+
+  fetch("/api/genus/ranking")
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#genus-ranking-table tbody");
+      tbody.innerHTML = "";
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">Даних немає</td></tr>';
+        return;
+      }
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+        <td>${row.genus_name}</td>
+        <td>${row.planted_rank}</td>
+        <td>${row.fertilizer_cost_rank}</td>
+        <td>${row.revenue_rank}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+    });
+
+  document.getElementById("flower-demand-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const start = document.getElementById("demand-start").value;
+    const end = document.getElementById("demand-end").value;
+    if (!start || !end) return;
+    const res = await fetch(`/api/flowers/demand?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+    const data = await res.json();
+    const tbody = document.querySelector("#flower-demand-table tbody");
+    tbody.innerHTML = "";
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center">Даних немає</td></tr>';
+      return;
+    }
+    data.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+      <td>${row.species_name}</td>
+      <td>${row.genus_name}</td>
+      <td>${row.sold_amount}</td>
+      <td>${row.sold_percent}%</td>
+    `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  document.getElementById("season-stats-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const year = document.getElementById("season-year").value;
+    if (!year) return;
+    const res = await fetch(`/api/seasons/stats?year=${encodeURIComponent(year)}`);
+    const data = await res.json();
+    let html = "";
+    if (!data.length) {
+      html = '<div class="alert alert-warning mt-2">Даних немає</div>';
+    } else {
+      let lastSeason = "";
+      html = `<table class="table table-bordered mt-2">
+      <thead>
+        <tr>
+          <th>Сезон</th>
+          <th>Вид</th>
+          <th>Рід</th>
+          <th>Середня кількість проданих</th>
+          <th>Сума зароблених</th>
+        </tr>
+      </thead>
+      <tbody>`;
+      data.forEach(row => {
+        html += `<tr>
+        <td>${row.season !== lastSeason ? row.season : ""}</td>
+        <td>${row.species_name}</td>
+        <td>${row.genus_name}</td>
+        <td>${row.avg_sold}</td>
+        <td>${row.total_earned}</td>
+      </tr>`;
+        lastSeason = row.season;
+      });
+      html += "</tbody></table>";
+    }
+    document.getElementById("season-result").innerHTML = html;
+  });
+
+  document.getElementById("client-pref-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const clientId = document.getElementById("client-select").value;
+    if (!clientId) return;
+    const res = await fetch(`/api/clients/preferences?client_id=${clientId}`);
+    const data = await res.json();
+    let html = "";
+    if (!data.length) {
+      html = '<div class="alert alert-warning">Даних немає</div>';
+    } else {
+      html = `<table class="table table-bordered mt-2">
+      <thead>
+        <tr>
+          <th>Вид</th>
+          <th>Рід</th>
+          <th>Загальна кількість</th>
+          <th>Дати замовлень</th>
+          <th>Ціни</th>
+        </tr>
+      </thead>
+      <tbody>`;
+      data.forEach(row => {
+        html += `<tr>
+        <td>${row.species_name}</td>
+        <td>${row.genus_name}</td>
+        <td>${row.total_amount}</td>
+        <td>${row.order_dates}</td>
+        <td>${row.prices}</td>
+      </tr>`;
+      });
+      html += "</tbody></table>";
+    }
+    document.getElementById("pref-result").innerHTML = html;
+  });
+
+  document.getElementById("courier-performance-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const start = document.getElementById("courier-start").value;
+    const end = document.getElementById("courier-end").value;
+    if (!start || !end) return;
+    const res = await fetch(`/api/couriers/performance?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+    const data = await res.json();
+    let html = "";
+    if (!data.length) {
+      html = '<div class="alert alert-warning mt-2">Даних немає</div>';
+    } else {
+      html = `<table class="table table-bordered mt-2">
+      <thead>
+        <tr>
+          <th>Кур’єр</th>
+          <th>% доставлених</th>
+          <th>% недоставлених</th>
+        </tr>
+      </thead>
+      <tbody>`;
+      data.forEach(row => {
+        html += `<tr>
+        <td>${row.full_name}</td>
+        <td>${row.delivered_percent !== null ? row.delivered_percent + "%" : "-"}</td>
+        <td>${row.undelivered_percent !== null ? row.undelivered_percent + "%" : "-"}</td>
+      </tr>`;
+      });
+      html += "</tbody></table>";
+    }
+    document.getElementById("courier-performance-result").innerHTML = html;
+  });
+
+  fetch("/api/species/most-popular")
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#most-popular-species-table tbody");
+      tbody.innerHTML = "";
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center">Даних немає</td></tr>';
+        return;
+      }
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+        <td>${row.genus_name}</td>
+        <td>${row.species_name}</td>
+        <td>${row.total_amount}</td>
+      `;
+        tbody.appendChild(tr);
+      });
+    });
 });

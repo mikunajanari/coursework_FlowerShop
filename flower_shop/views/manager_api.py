@@ -136,3 +136,166 @@ def track_order(request):
     if not row:
         return JsonResponse({'error': 'Замовлення не знайдено'}, status=404)
     return JsonResponse({'order_id': row[0], 'status': row[1]})
+
+@require_GET
+def monthly_order_trends(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT 
+                month, delivered, total, total_trend, delivered_trend
+            FROM Monthly_Order_Trends
+            ORDER BY month
+        """)
+        rows = cursor.fetchall()
+    data = [
+        {
+            'month': row[0].strftime('%Y-%m'),
+            'delivered': row[1],
+            'total': row[2],
+            'total_trend': float(row[3]),
+            'delivered_trend': float(row[4])
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def genus_ranking(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT 
+                genus_name,
+                planted_rank,
+                fertilizer_cost_rank,
+                revenue_rank
+            FROM GenusRanking
+            ORDER BY planted_rank, genus_name
+        """)
+        rows = cursor.fetchall()
+    data = [
+        {
+            'genus_name': row[0],
+            'planted_rank': row[1],
+            'fertilizer_cost_rank': row[2],
+            'revenue_rank': row[3]
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def flower_demand(request):
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+    if not start or not end:
+        return HttpResponseBadRequest("Не вказано період")
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT species_id, species_name, genus_name, sold_amount, sold_percent
+            FROM get_flower_demand(%s, %s)
+            ORDER BY sold_amount DESC
+        """, [start, end])
+        rows = cursor.fetchall()
+    data = [
+        {
+            'species_id': row[0],
+            'species_name': row[1],
+            'genus_name': row[2],
+            'sold_amount': row[3],
+            'sold_percent': float(row[4])
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def season_stats(request):
+    year = request.GET.get("year")
+    if not year:
+        return HttpResponseBadRequest("Не вказано рік")
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT season, species_name, genus_name, avg_sold, total_earned
+            FROM get_seasonal_stats(%s)
+            ORDER BY season, total_earned DESC
+        """, [year])
+        rows = cursor.fetchall()
+    data = [
+        {
+            'season': row[0],
+            'species_name': row[1],
+            'genus_name': row[2],
+            'avg_sold': float(row[3]),
+            'total_earned': float(row[4])
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def client_preferences(request):
+    client_id = request.GET.get("client_id")
+    if not client_id:
+        return HttpResponseBadRequest("Не вказано клієнта")
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT species_name, genus_name, total_amount, order_dates, prices
+            FROM get_customer_preferences(%s)
+            ORDER BY total_amount DESC
+        """, [client_id])
+        rows = cursor.fetchall()
+    data = [
+        {
+            'species_name': row[0],
+            'genus_name': row[1],
+            'total_amount': row[2],
+            'order_dates': row[3],
+            'prices': row[4]
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def courier_performance(request):
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+    if not start or not end:
+        return HttpResponseBadRequest("Не вказано період")
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT courier_id, full_name, delivered_percent, undelivered_percent
+            FROM analyze_courier_performance(%s, %s)
+            ORDER BY delivered_percent DESC NULLS LAST
+        """, [start, end])
+        rows = cursor.fetchall()
+    data = [
+        {
+            'courier_id': row[0],
+            'full_name': row[1],
+            'delivered_percent': float(row[2]) if row[2] is not None else None,
+            'undelivered_percent': float(row[3]) if row[3] is not None else None
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@require_GET
+def most_popular_species(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT species_id, species_name, genus_name, total_amount
+            FROM Most_Popular_Species_Per_Genus
+            ORDER BY genus_name, species_name
+        """)
+        rows = cursor.fetchall()
+    data = [
+        {
+            'species_id': row[0],
+            'species_name': row[1],
+            'genus_name': row[2],
+            'total_amount': row[3]
+        }
+        for row in rows
+    ]
+    return JsonResponse(data, safe=False)
