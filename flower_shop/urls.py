@@ -1,10 +1,10 @@
 from django.urls import path
 from .views import views
-from .views import courier_views
+from .views import courier_api
 from .views import admin_api
 from .views import greenhouse_api
 from .views import accountant_api
-from flower_shop.views import manager_api
+from .views import manager_api
 
 
 urlpatterns = [
@@ -22,9 +22,10 @@ urlpatterns = [
 
     path('courier', views.courier, name='courier_dashboard'),
 
-    path('api/courier/orders', courier_views.get_orders, name='get_orders'),
-    path('api/courier/accept/<int:order_id>', courier_views.accept_order, name='accept_order'),
-    path('api/courier/complete/<int:order_id>', courier_views.complete_order, name='complete_order'),
+    path('api/courier/orders-for-delivery', courier_api.orders_for_delivery),
+    path('api/courier/assign-order', courier_api.assign_courier),
+    path('api/courier/taken-orders', courier_api.orders_taken_by_courier),
+    path('api/courier/update-status', courier_api.update_order_status),
 
     path('admin', views.admin, name='admin_dashboard'),
 
