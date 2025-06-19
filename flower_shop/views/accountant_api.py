@@ -37,3 +37,35 @@ def order_fertilizer_api(request):
         return JsonResponse({'status': 'ok'})
     except Exception as e:
         return HttpResponseBadRequest(str(e))
+
+@require_GET
+def list_ready_products(request):
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT product_id, genus_name, species_name, planting_day FROM ready_products_view ORDER BY product_id DESC')
+        rows = cursor.fetchall()
+    data = [
+        {
+            'id': row[0],
+            'genus': row[1],
+            'species': row[2],
+            'planting_day': row[3] if isinstance(row[3], str) else row[3].strftime('%Y-%m-%d')
+        } for row in rows
+    ]
+    return JsonResponse(data, safe=False)
+
+@csrf_exempt
+@require_POST
+def set_flower_price_api(request):
+    import json
+    try:
+        data = json.loads(request.body)
+        product_id = data['flowerId']
+        price = data['price']
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT set_flower_price(%s, %s)",
+                [product_id, price]
+            )
+        return JsonResponse({'status': 'ok'})
+    except Exception as e:
+        return HttpResponseBadRequest(str(e))

@@ -44,3 +44,6 @@ def greenhouse(request):
 
 def accountant(request):
     return render(request, 'flower_shop/accountant_dashboard.html')
+
+def manager(request):
+    return render(request, 'flower_shop/manager_dashboard.html')

@@ -4,6 +4,8 @@ from .views import courier_views
 from .views import admin_api
 from .views import greenhouse_api
 from .views import accountant_api
+from flower_shop.views import manager_api
+
 
 urlpatterns = [
     path(r'', views.home, name='index'),
@@ -50,4 +52,16 @@ urlpatterns = [
     path('api/fertilizers', accountant_api.list_fertilizers),
     path('api/suppliers', accountant_api.list_suppliers),
     path('api/fertilizers/order', accountant_api.order_fertilizer_api),
+    path('api/flowers/ready', accountant_api.list_ready_products),
+    path('api/flowers/set-price', accountant_api.set_flower_price_api),
+
+    path('manager', views.manager, name='manager_dashboard'),
+    
+    path('api/clients', manager_api.create_client),
+    path('api/clients/list', manager_api.list_clients),
+    path('api/flowers/list', manager_api.list_flowers),
+    path('api/orders', manager_api.create_order_with_items_api),
+    path('api/flowers/check-stock', manager_api.check_stock),
+    path('api/orders/track', manager_api.track_order),
+    path('api/orders/list', manager_api.list_orders_by_client),
 ]

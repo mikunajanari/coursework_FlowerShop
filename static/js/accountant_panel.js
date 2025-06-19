@@ -71,4 +71,64 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Помилка при замовленні!");
       });
   });
+
+  // Підвантажити готові квіти для встановлення ціни
+  fetch("/api/flowers/ready")
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.querySelector("#set-price-table tbody");
+      tbody.innerHTML = "";
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Немає готових квітів</td></tr>';
+        return;
+      }
+      data.forEach(flower => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${flower.genus}</td>
+          <td>${flower.species}</td>
+          <td>${flower.planting_day}</td>
+          <td>
+            <input type="number" min="0.01" step="0.01" class="form-control form-control-sm price-input" placeholder="Ціна">
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm set-price-btn">💾 Зберегти</button>
+          </td>
+        `;
+        tr.querySelector(".set-price-btn").dataset.id = flower.id;
+        tbody.appendChild(tr);
+      });
+
+      // Додаємо обробник для кожної кнопки
+      tbody.querySelectorAll(".set-price-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          const productId = btn.dataset.id;
+          const priceInput = btn.closest("tr").querySelector(".price-input");
+          const price = priceInput.value;
+          if (!price || Number(price) <= 0) {
+            alert("Введіть коректну ціну!");
+            return;
+          }
+          fetch("/api/flowers/set-price", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ flowerId: productId, price })
+          })
+            .then(async res => {
+              let data;
+              try {
+                data = await res.json();
+              } catch {
+                data = {};
+              }
+              if (res.ok && data.status === 'ok') {
+                alert("Ціну встановлено успішно!");
+              } else {
+                alert("Помилка: " + (data.error || data.status || res.statusText || "Невідома помилка"));
+              }
+            })
+            .catch(() => alert("❌ Помилка при з'єднанні з сервером!"));
+        });
+      });
+    });
 });
