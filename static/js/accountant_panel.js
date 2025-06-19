@@ -131,4 +131,65 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       });
     });
+
+  document.getElementById("expense-report-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+    const type = document.getElementById("type").value;
+    const tbody = document.querySelector("#expenses-table tbody");
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Завантаження...</td></tr>';
+    const res = await fetch(`/api/accountant/expenses-report?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&type=${encodeURIComponent(type)}`);
+    const result = await res.json();
+    const data = result.data || [];
+    tbody.innerHTML = "";
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center">Даних немає</td></tr>';
+      document.getElementById("total-expenses").innerHTML = "";
+      return;
+    }
+    data.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+      <td>${row.expense_type}</td>
+      <td>${row.item_name}</td>
+      <td>${row.amount}</td>
+      <td>${row.price}</td>
+      <td>${row.total}</td>
+      <td>${row.date}</td>
+    `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById("total-expenses").innerHTML =
+      `<div class="alert alert-info mt-3">Загальна сума витрат: <b>${result.total_sum.toFixed(2)}</b></div>`;
+  });
+
+  document.getElementById("income-report-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const start = document.getElementById("incomeStart").value;
+    const end = document.getElementById("incomeEnd").value;
+    const tbody = document.querySelector("#income-table tbody");
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Завантаження...</td></tr>';
+    document.getElementById("income-total").innerHTML = "";
+    const res = await fetch(`/api/accountant/income-report?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+    const data = await res.json();
+    tbody.innerHTML = "";
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center">Даних немає</td></tr>';
+      return;
+    }
+    data.forEach(row => {
+      const isTotal = row.species_name === "ВСЬОГО";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.species_name || ''}</td>
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.genus_name || ''}</td>
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.sold_amount ?? ''}</td>
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.total_earned ?? ''}</td>
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.total_expenses ?? ''}</td>
+      <td${isTotal ? ' class="fw-bold"' : ''}>${row.profit ?? ''}</td>
+    `;
+      tbody.appendChild(tr);
+    });
+  });
 });

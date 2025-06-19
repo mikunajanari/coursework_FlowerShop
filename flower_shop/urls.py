@@ -55,6 +55,8 @@ urlpatterns = [
     path('api/fertilizers/order', accountant_api.order_fertilizer_api),
     path('api/flowers/ready', accountant_api.list_ready_products),
     path('api/flowers/set-price', accountant_api.set_flower_price_api),
+    path('api/accountant/expenses-report', accountant_api.expenses_report),
+    path('api/accountant/income-report', accountant_api.income_report),
 
     path('manager', views.manager, name='manager_dashboard'),
     
