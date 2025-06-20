@@ -4,8 +4,8 @@
 
 {% block content %}
 	<section class="single-product">
-		<div class="container">
-			<div class="row">
+    <div class="container">
+		<div class="row">
 				<div class="col-md-6">
 					<ol class="breadcrumb">
 						<li><a href="{% url 'index' %}">Головна</a></li>
@@ -14,204 +14,40 @@
 					</ol>
 				</div>
 			</div>
-			<div class="row mt-20">
-				<div class="col-md-5">
-					<div class="single-product-slider">
-						<div id='carousel-custom' class='carousel slide' data-ride='carousel'>
-							<div class='carousel-outer'>
-								<!-- me art lab slider -->
-								<div class='item active'>
-									<img class="img-responsive" src="{{ product.image.url }}"
-										alt="{{ product.name }}" />
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-7">
-					<div class="single-product-details">
-						<h2>Eclipse Crossbody</h2>
-						<p class="product-price">$300</p>
-						<div class="product-quantity">
-							<span>Кількість:</span>
-							<div class="product-quantity-slider">
-								<input id="product-quantity" type="number" value="1" min="1" name="product-quantity">
-							</div>
-						</div>
-						<button type="button" class="btn btn-main mt-20" id="add-to-cart-btn">Додати до кошика</button>
-					</div>
-					<div class="tabCommon mt-20">
-						<div class="tab-content patternbg">
-							<div id="details" class="tab-pane fade active in">
-								<h4>Деталі товару</h4>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-									incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-									exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-									irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-									pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-									deserunt mollit anim id est laborum. Sed ut per spici</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis delectus quidem
-									repudiandae veniam distinctio repellendus magni pariatur molestiae asperiores animi,
-									eos quod iusto hic doloremque iste a, nisi iure at unde molestias enim fugit, nulla
-									voluptatibus. Deserunt voluptate tempora aut illum harum, deleniti laborum animi
-									neque, praesentium explicabo, debitis ipsa?</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<section class="products related-products section">
-		<div class="container">
-			<div class="row">
-				<div class="title text-center">
-					<h2>Related Products</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					<div class="product-item">
-						<div class="product-thumb">
-							<span class="bage">Sale</span>
-							<img class="img-responsive" src="images/shop/products/product-5.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Reef Boardsport</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-1.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-2.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Strayhorn SP</a></h4>
-							<p class="price">$230</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-3.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Bradley Mid</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</section>
-
-
-
-	<!-- Modal -->
-	<div class="modal product-modal fade" id="product-modal">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			<i class="tf-ion-close"></i>
-		</button>
-		<div class="modal-dialog " role="document">
-			<div class="modal-content">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-8">
-							<div class="modal-image">
-								<img class="img-responsive" src="images/shop/products/modal-product.jpg" />
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="product-short-details">
-								<h2 class="product-title">GM Pendant, Basalt Grey</h2>
-								<p class="product-price">$200</p>
-								<p class="product-short-description">
-									Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem iusto nihil cum. Illo
-									laborum numquam rem aut officia dicta cumque.
-								</p>
-								<a href="#!" class="btn btn-main">Add To Cart</a>
-								<a href="#!" class="btn btn-transparent">View Product Details</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="row mt-20">
+            <div class="col-md-5">
+                <div class="single-product-slider" style="display: flex; justify-content: center; align-items: center; height: 500px; overflow: hidden;">
+                    <img class="img-responsive"
+                         src="https://{{ product.photo_link }}"
+                         alt="{{ product.species_name }}"
+                         style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="single-product-details">
+                    <h2>{{ product.species_name }} ({{ product.genus_name }})</h2>
+                    <p class="product-price">{{ product.price }} грн</p>
+                    <p>Доступно: {{ product.available_amount }}</p>
+                    <div class="product-quantity">
+                        <span>Кількість:</span>
+                        <div class="product-quantity-slider">
+                            <input id="product-quantity" type="number" value="1" min="1" name="product-quantity">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-main mt-20" id="add-to-cart-btn">Додати до кошика</button>
+                </div>
+                <div class="tabCommon mt-20">
+                    <div class="tab-content patternbg">
+                        <div id="details" class="tab-pane fade active in">
+                            <h4>Інструкція з догляду</h4>
+                            <p>
+                                {{ product.care_instructions|linebreaksbr }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

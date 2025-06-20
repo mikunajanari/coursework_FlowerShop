@@ -6,20 +6,23 @@ from .views import greenhouse_api
 from .views import accountant_api
 from .views import manager_api
 from .views import login_api
+from .views import shop_api
+from .views import signup_api
 
 
 urlpatterns = [
-    path(r'', views.home, name='index'),
+    path(r'', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('login/', login_api.login_pg, name='login'),
-    path('signup/', views.signup, name='signup'),
+    path('signup/', signup_api.signup, name='signup'),
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('confirmation/', views.confirmation, name='confirmation'),
     path('profile_details/', views.profile_details, name='profile_details'),
     path('client_orders/', views.client_orders, name='client_orders'),
-    path('shop/', views.shop, name='shop'),
-    path('shop/product_single/', views.product_single, name='product_single'),
+    path('shop/', shop_api.shop, name='shop'),
+    path('shop/product_single/<int:product_id>/', shop_api.product_single, name='product_single'),
+    path('logout/', views.logout_view, name='logout'),
 
     path('courier', views.courier, name='courier_dashboard'),
 

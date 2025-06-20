@@ -1,15 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
   <meta charset="utf-8">
   <title>{% block worker_title %}Панель робітника{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block worker_head %}{% endblock %}
 </head>
+
 <body>
   <!-- Шапка -->
   <section class="top-header">
@@ -19,7 +22,7 @@
         <div class="col-md-4 text-center"><strong>EVERGREEN</strong></div>
         <div class="col-md-4 text-right">
           <span>👤 <span id="user-role">{% block worker_role %}Робітник{% endblock %}</span></span>
-          <button class="btn btn-sm btn-outline-danger ml-2" id="logout-btn">Вийти</button>
+          <button class="btn btn-danger" id="logout-btn">Вийти</button>
         </div>
       </div>
     </div>
@@ -40,5 +43,19 @@
   </footer>
 
   {% block worker_scripts %}{% endblock %}
+  <script src="{% static 'js/script.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const logoutBtn = document.getElementById("logout-btn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", function () {
+          if (confirm("Ви точно хочете вийти зі свого облікового запису?")) {
+            window.location.href = "/logout/";
+          }
+        });
+      }
+    });
+  </script>
 </body>
+
 </html>

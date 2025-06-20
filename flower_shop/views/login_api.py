@@ -47,7 +47,7 @@ def login_pg(request):
             elif 'courier' in groups:
                 return redirect('courier_dashboard')
             elif 'customer' in groups:
-                return redirect('customer_dashboard')
+                return redirect('index')
             else:
                 return redirect('index')  # Якщо група не знайдена, перенаправляємо на головну сторінку
         except OperationalError:

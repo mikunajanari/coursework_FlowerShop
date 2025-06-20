@@ -19,171 +19,65 @@
 	</div>
 </section>
 
-
 <section class="products section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-3">
 				<div class="widget">
 					<h4 class="widget-title">Сортування</h4>
-					<form method="post" action="#">
-						{% csrf_token %}
-						<select class="form-control">
-							<option>опція 1</option>
-							<option>опція 2</option>
-							<option>опція 3</option>
-							<option>опція 4</option>
+					<form method="get" action="">
+						<select class="form-control" name="sort" onchange="this.form.submit()">
+							<option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Ціна: від меншої до більшої</option>
+							<option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Ціна: від більшої до меншої</option>
 						</select>
+						{% if current_genus %}
+						<input type="hidden" name="genus" value="{{ current_genus }}">
+						{% endif %}
 					</form>
 				</div>
 				<div class="widget product-category">
-					<h4 class="widget-title">Фільтрація</h4>
-					<div class="panel-group commonAccordion" id="accordion" role="tablist" aria-multiselectable="true">
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="headingOne">
-								<h4 class="panel-title">
-									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-										aria-expanded="true" aria-controls="collapseOne">
-										Ціна
-									</a>
-								</h4>
-							</div>
-							<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
-								aria-labelledby="headingOne">
-								<div class="panel-body">
-									<ul>
-										<li><a href="#!">1-2</a></li>
-										<li><a href="#!">2-3</a></li>
-										<li><a href="#!">3-4</a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
-
+					<h4 class="widget-title">Фільтрація за родом</h4>
+					<form method="get" action="">
+						<select class="form-control" name="genus" onchange="this.form.submit()">
+							<option value="">Всі роди</option>
+							{% for g in genera %}
+							<option value="{{ g }}" {% if current_genus == g %}selected{% endif %}>{{ g }}</option>
+							{% endfor %}
+						</select>
+						{% if current_sort %}
+						<input type="hidden" name="sort" value="{{ current_sort }}">
+						{% endif %}
+					</form>
 				</div>
 			</div>
 			<div class="col-md-9">
 				<div class="row">
-
+					{% for product in products %}
 					<div class="col-md-4">
 						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-1.jpg"
-									alt="product-img" />
+							<div class="product-thumb"
+								style="display: flex; justify-content: center; align-items: center; height: 200px; overflow: hidden;">
+								<img class="img-responsive" src="https://{{ product.photo_link }}"
+									alt="{{ product.species_name }}"
+									style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
 							</div>
 							<div class="product-content">
-								<h4><a href="{% url 'product_single' %}">Reef Boardsport</a></h4>
-								<p class="price">$200</p>
-								
+								<h4>
+									<a href="{% url 'product_single' product.id %}">
+										{{ product.species_name }} ({{ product.genus_name }})
+									</a>
+								</h4>
+								<p class="price">{{ product.price }} грн</p>
+								<p>Доступно: {{ product.available_amount }}</p>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-2.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-								
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-3.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Strayhorn SP</a></h4>
-								<p class="price">$230</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-4.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Bradley Mid</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-5.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-6.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-7.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-8.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="product-item">
-							<div class="product-thumb">
-								<img class="img-responsive" src="images/shop/products/product-9.jpg"
-									alt="product-img" />
-							</div>
-							<div class="product-content">
-								<h4><a href="product-single.html">Rainbow Shoes</a></h4>
-								<p class="price">$200</p>
-						
-							</div>
-						</div>
-					</div>
+					{% empty %}
+					<p>Немає доступних товарів.</p>
+					{% endfor %}
 				</div>
 			</div>
+		</div>
+	</div>
 </section>
 {% endblock %}
