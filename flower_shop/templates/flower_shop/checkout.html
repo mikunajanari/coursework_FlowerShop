@@ -30,30 +30,31 @@
                 <div class="col-md-8">
                     <div class="block billing-details">
                         <h4 class="widget-title">Деталі платежу</h4>
-                        <form class="checkout-form">
+                        <form id="checkout-form" class="checkout-form">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label for="name">Ім'я</label>
-                                <input type="text" class="form-control" id="name" placeholder="">
+                                <input type="text" class="form-control" id="name" placeholder="" value="{{ user_data.first_name|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="surname">Прізвище</label>
-                                <input type="text" class="form-control" id="surname" placeholder="">
+                                <input type="text" class="form-control" id="surname" placeholder="" value="{{ user_data.surname|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_city">Місто</label>
-                                <input type="text" class="form-control" id="user_city" placeholder="">
+                                <input type="text" class="form-control" id="user_city" placeholder="" value="{{ user_data.city|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_street">Вулиця</label>
-                                <input type="text" class="form-control" id="user_street" placeholder="">
+                                <input type="text" class="form-control" id="user_street" placeholder="" value="{{ user_data.street|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_house">Будинок</label>
-                                <input type="text" class="form-control" id="user_house" placeholder="">
+                                <input type="text" class="form-control" id="user_house" placeholder="" value="{{ user_data.house|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_flat">Квартира</label>
-                                <input type="text" class="form-control" id="user_flat" placeholder="">
+                                <input type="text" class="form-control" id="user_flat" placeholder="" value="{{ user_data.flat|default:'' }}">
                             </div>
                         </form>
                     </div>
@@ -77,9 +78,9 @@
                             </ul>
                             <div class="summary-total">
                                 <span>Всього</span>
-                                <span>$0.00</span>
+                                <span>{{ cart.get_total_price }} грн</span>
                             </div>
-                            <button id="confirm-order-btn" class="btn btn-main btn-block mt-20">Підтвердити замовлення</button>
+                            <button id="confirm-order-btn" type="button" class="btn btn-main btn-block mt-20">Підтвердити замовлення</button>
                         </div>
                     </div>
                 </div>
@@ -87,4 +88,45 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirm-order-btn').addEventListener('click', function() {
+            // Показуємо індикатор завантаження
+            this.disabled = true;
+            this.innerText = 'Обробка...';
+            
+            // Отримуємо CSRF-токен
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            // Відправляємо запит
+            fetch('/place_order/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(new FormData(document.getElementById('checkout-form')).entries())
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/order_confirmation/';
+                } else {
+                    alert('Помилка: ' + (data.error || 'Невідома помилка'));
+                    this.disabled = false;
+                    this.innerText = 'Підтвердити замовлення';
+                }
+            })
+            .catch(error => {
+                console.error('Помилка:', error);
+                alert('Виникла помилка при оформленні замовлення');
+                this.disabled = false;
+                this.innerText = 'Підтвердити замовлення';
+            });
+        });
+    });
+</script>
 {% endblock %}

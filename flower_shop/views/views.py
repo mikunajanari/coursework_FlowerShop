@@ -15,15 +15,6 @@ def about(request):
 def cart(request):
     return render(request, 'flower_shop/cart.html')
 
-def checkout(request):
-    return render(request, 'flower_shop/checkout.html')
-
-def confirmation(request):
-    return render(request, 'flower_shop/confirmation.html')
-
-def profile_details(request):
-    return render(request, 'flower_shop/profile_details.html')
-
 def client_orders(request):
     return render(request, 'flower_shop/client_orders.html')
 

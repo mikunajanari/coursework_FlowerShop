@@ -8,6 +8,11 @@ from .views import manager_api
 from .views import login_api
 from .views import shop_api
 from .views import signup_api
+from .views import profile_details_api
+from .views import cart_api
+from .views import checkout_api
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -15,10 +20,10 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('login/', login_api.login_pg, name='login'),
     path('signup/', signup_api.signup, name='signup'),
-    path('cart/', views.cart, name='cart'),
-    path('checkout/', views.checkout, name='checkout'),
-    path('confirmation/', views.confirmation, name='confirmation'),
-    path('profile_details/', views.profile_details, name='profile_details'),
+    path('cart/', cart_api.cart_detail, name='cart_detail'),
+    path('checkout/', checkout_api.checkout, name='checkout'),
+    path('confirmation/', checkout_api.order_confirmation, name='confirmation'),
+    path('profile_details/', profile_details_api.profile_details, name='profile_details'),
     path('client_orders/', views.client_orders, name='client_orders'),
     path('shop/', shop_api.shop, name='shop'),
     path('shop/product_single/<int:product_id>/', shop_api.product_single, name='product_single'),
@@ -78,4 +83,9 @@ urlpatterns = [
     path('api/clients/preferences', manager_api.client_preferences),
     path('api/couriers/performance', manager_api.courier_performance),
     path('api/species/most-popular', manager_api.most_popular_species),
-]
+    path('cart/add/<int:product_id>/', cart_api.cart_add, name='cart_add'),
+    path('cart/remove/<int:product_id>/', cart_api.cart_remove, name='cart_remove'),
+    path('cart/update/<int:product_id>/', cart_api.cart_update_quantity, name='cart_update_quantity'),
+    path('place_order/', checkout_api.place_order, name='place_order'),
+    path('order_confirmation/', checkout_api.order_confirmation, name='order_confirmation'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

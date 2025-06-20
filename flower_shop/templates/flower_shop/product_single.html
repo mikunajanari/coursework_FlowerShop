@@ -3,24 +3,23 @@
 {% block title %}EVERGREEN{% endblock %}
 
 {% block content %}
-	<section class="single-product">
+<section class="single-product">
     <div class="container">
-		<div class="row">
-				<div class="col-md-6">
-					<ol class="breadcrumb">
-						<li><a href="{% url 'index' %}">Головна</a></li>
-						<li><a href="{% url 'shop' %}">Магазин</a></li>
-						<li class="active">Деталі продукту</li>
-					</ol>
-				</div>
-			</div>
+        <div class="row">
+            <div class="col-md-6">
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'index' %}">Головна</a></li>
+                    <li><a href="{% url 'shop' %}">Магазин</a></li>
+                    <li class="active">Деталі продукту</li>
+                </ol>
+            </div>
+        </div>
         <div class="row mt-20">
             <div class="col-md-5">
-                <div class="single-product-slider" style="display: flex; justify-content: center; align-items: center; height: 500px; overflow: hidden;">
-                    <img class="img-responsive"
-                         src="https://{{ product.photo_link }}"
-                         alt="{{ product.species_name }}"
-                         style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
+                <div class="single-product-slider"
+                    style="display: flex; justify-content: center; align-items: center; height: 500px; overflow: hidden;">
+                    <img class="img-responsive" src="https://{{ product.photo_link }}" alt="{{ product.species_name }}"
+                        style="max-width: 100%; max-height: 100%; object-fit: contain; display: block;" />
                 </div>
             </div>
             <div class="col-md-7">
@@ -30,11 +29,20 @@
                     <p>Доступно: {{ product.available_amount }}</p>
                     <div class="product-quantity">
                         <span>Кількість:</span>
-                        <div class="product-quantity-slider">
-                            <input id="product-quantity" type="number" value="1" min="1" name="product-quantity">
-                        </div>
+
                     </div>
-                    <button type="button" class="btn btn-main mt-20" id="add-to-cart-btn">Додати до кошика</button>
+                    <form action="{% url 'cart_add' product.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <div class="product-quantity-slider">
+                            <input id="product-quantity" type="number" value="1" min="1" max="{{ can_add }}"
+                                name="quantity" {% if can_add == 0 %}disabled{% endif %}>
+                        </div>
+                        <button type="submit"
+                            class="btn {% if can_add == 0 %}btn-secondary disabled{% else %}btn-main{% endif %} mt-20"
+                            {% if can_add == 0 %}disabled{% endif %}>
+                            {% if can_add == 0 %}Недоступно{% else %}Додати до кошика{% endif %}
+                        </button>
+                    </form>
                 </div>
                 <div class="tabCommon mt-20">
                     <div class="tab-content patternbg">

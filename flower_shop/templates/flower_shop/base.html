@@ -48,22 +48,36 @@
                     <ul class="top-menu text-right list-inline">
                         <!-- Cart -->
                         <li class="dropdown cart-nav dropdown-slide">
-                            <a href="{% url 'cart' %}" class="dropdown-toggle" data-toggle="dropdown"
+                            <a href="{% url 'cart_detail' %}" class="dropdown-toggle" data-toggle="dropdown"
                                 data-hover="dropdown">
-                                <i class="tf-ion-android-cart"></i>Кошик (<span class="cart-counter">0</span>)
+                                <i class="tf-ion-android-cart"></i>Кошик (<span class="cart-counter">{{ cart|length }}</span>)
                             </a>
                             <div class="dropdown-menu cart-dropdown">
                                 <div class="media-area">
-                                    <!-- Cart items will be inserted here -->
+                                    {% for item in cart %}
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <a href="#">
+                                                <img class="media-object" src="https://{{ item.product.flower.flower.photo_link|default:'' }}"
+                                                    alt="{{ item.product.flower.flower.species_name|default:'' }}" width="40">
+                                            </a>
+                                        </div>
+                                        <div class="media-body">
+                                            <h6 class="media-heading">{{ item.product.flower.flower.species_name|default:'' }}</h6>
+                                            <span class="price">{{ item.price }} грн x {{ item.quantity }}</span>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="text-center">Кошик порожній</div>
+                                    {% endfor %}
                                 </div>
                                 <div class="cart-summary">
                                     <span>Всього</span>
-                                    <span class="total-price">$0.00</span>
+                                    <span class="total-price">{{ cart.get_total_price }} грн</span>
                                 </div>
                                 <ul class="text-center cart-buttons">
-                                    <li><a href="{% url 'cart' %}" class="btn btn-small">Переглянути</a></li>
-                                    <li><a href="{% url 'checkout' %}"
-                                            class="btn btn-small btn-solid-border">Оформити</a>
+                                    <li><a href="{% url 'cart_detail' %}" class="btn btn-small">Переглянути</a></li>
+                                    <li><a href="{% url 'checkout' %}" class="btn btn-small btn-solid-border">Оформити</a>
                                     </li>
                                 </ul>
                             </div>
@@ -179,7 +193,6 @@
     <script src="{% static 'plugins/slick/slick.min.js' %}"></script>
     <script src="{% static 'plugins/slick/slick-animation.min.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
-    <script src="{% static 'js/cart.js' %}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const logoutBtn = document.getElementById("logout-btn");

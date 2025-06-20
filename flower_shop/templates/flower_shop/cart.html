@@ -26,23 +26,65 @@
 				<div class="col-md-8 col-md-offset-2">
 					<div class="block">
 						<div class="product-list">
-							<form method="post">
-								<table class="table">
-									<thead>
-										<tr>
-											<th>Фото</th>
-											<th>Назва</th>
-											<th>Ціна</th>
-											<th>Кількість</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody id="cart-table-body">
-										<!-- JS вставить товари -->
-									</tbody>
-								</table>
-								<a href="{% url 'checkout' %}" class="btn btn-main pull-right">Оформити замовлення</a>
-							</form>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Фото</th>
+										<th>Назва</th>
+										<th>Ціна</th>
+										<th>Кількість</th>
+										<th>Сума</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for item in cart %}
+									<tr>
+										<td><img src="https://{{ item.product.flower.flower.photo_link|default:'' }}"
+												alt="{{ item.product.flower.flower.species_name|default:'' }}"
+												width="60"></td>
+										<td>{{ item.product.flower.flower.species_name }}</td>
+										<td>{{ item.price }} грн</td>
+										<td>
+											{% if item.product %}
+											<form action="{% url 'cart_update_quantity' item.product.kod %}"
+												method="post" style="display:inline;">
+												{% csrf_token %}
+												<input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+													max="{{ item.product.flower_available }}" style="width:60px;">
+												{% if item.quantity >= item.product.available_amount %}
+												<div class="text-danger"
+													style="font-size: 12px; margin-top: 5px; font-weight: bold;">
+													Максимальна кількість
+												</div>
+												{% endif %}
+											</form>
+											{% else %}
+											<span class="text-danger">Товар не знайдено</span>
+											{% endif %}
+										</td>
+										<td>{{ item.total_price }} грн</td>
+										<td>
+											{% if item.product %}
+											<form action="{% url 'cart_remove' item.product.kod %}" method="post"
+												style="display:inline;">
+												{% csrf_token %}
+												<button type="submit" class="btn btn-xs btn-danger">Видалити</button>
+											</form>
+											{% endif %}
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="6" class="text-center">Кошик порожній</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							<div class="text-right">
+								<strong>Загальна сума: {{ cart.get_total_price }} грн</strong>
+							</div>
+							<a href="{% url 'checkout' %}" class="btn btn-main pull-right">Оформити замовлення</a>
 						</div>
 					</div>
 				</div>
@@ -50,4 +92,97 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Повністю очищаємо localStorage при завантаженні сторінки
+    localStorage.clear(); // Очищаємо все
+    localStorage.removeItem('cart'); // Додатково видаляємо cart
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInputs = document.querySelectorAll('input[name="quantity"]');
+
+        quantityInputs.forEach(input => {
+            // Перевіряємо кожен input при завантаженні сторінки
+            checkMaxReached(input);
+            
+            // Блокуємо введення недопустимих значень при вводі
+            input.addEventListener('input', function () {
+                const max = parseInt(this.getAttribute('max'));
+                const value = parseInt(this.value);
+
+                if (!isNaN(value) && value > max) {
+                    this.value = max;
+                    this.style.borderColor = '#ff0000';
+                    setTimeout(() => { this.style.borderColor = ''; }, 500);
+                }
+                
+                // Перевіряємо обмеження після зміни
+                checkMaxReached(this);
+            });
+
+            // Повністю блокуємо прокрутку та кнопки вгору/вниз
+            input.addEventListener('wheel', function (e) {
+                const max = parseInt(this.getAttribute('max'));
+                const value = parseInt(this.value);
+
+                if (e.deltaY < 0 && value >= max) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Блокування стрілок вгору/вниз для максимуму
+            input.addEventListener('keydown', function(e) {
+                const max = parseInt(this.getAttribute('max'));
+                const value = parseInt(this.value);
+                
+                // Блокуємо стрілку вгору при досягненні максимуму
+                if (e.key === 'ArrowUp' && value >= max) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Відправляємо форму при зміні
+            input.addEventListener('change', function () {
+                const max = parseInt(this.getAttribute('max'));
+                const value = parseInt(this.value);
+
+                if (value > max) {
+                    this.value = max;
+                }
+                
+                checkMaxReached(this);
+                this.form.submit();
+            });
+        });
+        
+        // Функція перевірки чи досягнуто максимуму
+        function checkMaxReached(input) {
+            const max = parseInt(input.getAttribute('max'));
+            const value = parseInt(input.value);
+            
+            if (value >= max) {
+                // Додаємо атрибут max-reached для CSS-стилізації
+                input.setAttribute('data-max-reached', 'true');
+            } else {
+                input.removeAttribute('data-max-reached');
+            }
+        }
+    });
+</script>
+
+<style>
+    /* Стилізація для поля з максимальною кількістю */
+    input[type="number"][data-max-reached="true"] {
+        background-color: #fff3f3;
+        color: #d9534f;
+    }
+    
+    /* Повне блокування вбудованих кнопок для Chrome */
+    input[type="number"][data-max-reached="true"]::-webkit-inner-spin-button {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+</style>
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db import connection
+from flower_shop.cart import Cart
 
 def shop(request):
     sort = request.GET.get('sort', 'asc')
@@ -45,6 +46,8 @@ def shop(request):
     })
 
 def product_single(request, product_id):
+    from flower_shop.cart import Cart
+    cart = Cart(request)
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT product_id, species_name, genus_name, price, photo_link, available_amount, instruction
@@ -63,4 +66,12 @@ def product_single(request, product_id):
             'available_amount': row[5],
             'care_instructions': row[6],
         }
-    return render(request, "flower_shop/product_single.html", {"product": product})
+    in_cart_quantity = cart.get_quantity_by_id(product['id']) if hasattr(cart, 'get_quantity_by_id') else 0
+    can_add = product['available_amount'] - in_cart_quantity
+    if can_add < 0:
+        can_add = 0
+    return render(request, "flower_shop/product_single.html", {
+        "product": product,
+        "in_cart_quantity": in_cart_quantity,
+        "can_add": can_add,
+    })

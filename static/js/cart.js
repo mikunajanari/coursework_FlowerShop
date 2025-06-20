@@ -53,6 +53,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    const quantityInputs = document.querySelectorAll('input[name="quantity"]');
+    
+    quantityInputs.forEach(input => {
+        // Перевіряємо при введенні
+        input.addEventListener('input', function() {
+            const max = parseInt(this.getAttribute('max'));
+            const value = parseInt(this.value);
+            
+            if (value > max) {
+                this.value = max;
+            }
+        });
+        
+        // Відправляємо форму при зміні
+        input.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
 });
 
 // Додаємо товар у кошик
