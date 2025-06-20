@@ -6,9 +6,6 @@ def home(request):
 def about(request):
     return render(request, 'flower_shop/about.html')
 
-def login(request):
-    return render(request, 'flower_shop/login.html')
-
 def signup(request):
     return render(request, 'flower_shop/signup.html')
 

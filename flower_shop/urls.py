@@ -5,12 +5,13 @@ from .views import admin_api
 from .views import greenhouse_api
 from .views import accountant_api
 from .views import manager_api
+from .views import login_api
 
 
 urlpatterns = [
     path(r'', views.home, name='index'),
     path('about/', views.about, name='about'),
-    path('login/', views.login, name='login'),
+    path('login/', login_api.login_pg, name='login'),
     path('signup/', views.signup, name='signup'),
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),

@@ -48,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'flower_shop.middleware.DynamicDBUserMiddleware',
 ]
 
 ROOT_URLCONF = 'flower_site.urls'
@@ -77,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'FlowerSystem',
-        'USER': 'accountant_1',
-        'PASSWORD': 'accountant',
+        'USER': 'guest_user',
+        'PASSWORD': 'guest',
         'HOST': 'localhost',
         'PORT': '5432',
     }
