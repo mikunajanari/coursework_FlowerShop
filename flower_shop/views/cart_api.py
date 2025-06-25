@@ -1,9 +1,11 @@
 from pyexpat.errors import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 from flower_shop.models import Product  # Замініть на вашу модель товару
 from flower_shop.cart import Cart
 from django.db import connection
+import json
 
 @require_POST
 def cart_add(request, product_id):
@@ -80,3 +82,43 @@ def cart_update_quantity(request, product_id):
             
         cart.add(product=product, quantity=new_quantity, update_quantity=True)
     return redirect('cart_detail')
+
+@require_POST
+def sync_cart(request):
+    """Синхронізує кошик з клієнта з серверним кошиком"""
+    try:
+        data = json.loads(request.body)
+        if not isinstance(data, list):
+            return JsonResponse({'error': 'Невалідний формат даних'}, status=400)
+        
+        # Отримуємо серверний кошик
+        cart = Cart(request)
+        
+        # Очищаємо серверний кошик перед синхронізацією
+        cart.clear()
+        
+        # Додаємо товари з клієнтського кошика у серверний
+        for item in data:
+            product_id = item.get('id')
+            quantity = item.get('quantity', 1)
+            
+            if not product_id or quantity <= 0:
+                continue
+                
+            product = Product.objects.filter(kod=product_id).first()
+            if not product:
+                continue
+                
+            # Додаємо товар у кошик
+            cart.add(product=product, quantity=quantity, update_quantity=True)
+        
+        return JsonResponse({
+            'success': True,
+            'cart_size': len(cart),
+            'total_price': str(cart.get_total_price())
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Невалідний JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

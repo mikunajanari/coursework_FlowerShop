@@ -88,4 +88,5 @@ urlpatterns = [
     path('cart/update/<int:product_id>/', cart_api.cart_update_quantity, name='cart_update_quantity'),
     path('place_order/', checkout_api.place_order, name='place_order'),
     path('order_confirmation/', checkout_api.order_confirmation, name='order_confirmation'),
+    path('sync_cart/', cart_api.sync_cart, name='sync_cart'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

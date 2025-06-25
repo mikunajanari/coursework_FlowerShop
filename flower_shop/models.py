@@ -351,11 +351,6 @@ class OrderItems(models.Model):
     kod = models.AutoField(primary_key=True)
     order_id = models.ForeignKey(Orders, on_delete=models.PROTECT, db_column='order_id')
     flower = models.ForeignKey(Species, on_delete=models.PROTECT, db_column='flower')
-    amount = models.PositiveSmallIntegerField(
-        validators=[
-            MinValueValidator(1, message="Кількість має бути більшою за 0.")
-        ]
-    )
 
     class Meta:
         managed = False

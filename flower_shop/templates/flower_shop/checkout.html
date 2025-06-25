@@ -34,27 +34,44 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="name">Ім'я</label>
-                                <input type="text" class="form-control" id="name" placeholder="" value="{{ user_data.first_name|default:'' }}">
+                                <input type="text" class="form-control" id="name" placeholder=""
+                                    value="{{ user_data.first_name|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="surname">Прізвище</label>
-                                <input type="text" class="form-control" id="surname" placeholder="" value="{{ user_data.surname|default:'' }}">
+                                <input type="text" class="form-control" id="surname" placeholder=""
+                                    value="{{ user_data.surname|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_city">Місто</label>
-                                <input type="text" class="form-control" id="user_city" placeholder="" value="{{ user_data.city|default:'' }}">
+                                <input type="text" class="form-control" id="user_city" placeholder=""
+                                    value="{{ user_data.city|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_street">Вулиця</label>
-                                <input type="text" class="form-control" id="user_street" placeholder="" value="{{ user_data.street|default:'' }}">
+                                <input type="text" class="form-control" id="user_street" placeholder=""
+                                    value="{{ user_data.street|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_house">Будинок</label>
-                                <input type="text" class="form-control" id="user_house" placeholder="" value="{{ user_data.house|default:'' }}">
+                                <input type="text" class="form-control" id="user_house" placeholder=""
+                                    value="{{ user_data.house|default:'' }}">
                             </div>
                             <div class="form-group">
                                 <label for="user_flat">Квартира</label>
-                                <input type="text" class="form-control" id="user_flat" placeholder="" value="{{ user_data.flat|default:'' }}">
+                                <input type="text" class="form-control" id="user_flat" placeholder=""
+                                    value="{{ user_data.flat|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="deliveryMethod" name="deliveryMethod" required>
+                                    <option value="" disabled selected hidden>Оберіть спосіб доставки</option>
+                                    <option value="кур’єр" id="courierOption">Кур'єр</option>
+                                    <option value="самовивіз">Самовивіз (безкоштовно)</option>
+                                    <option value="пошта">Пошта (за тарифами перевізника)</option>
+                                </select>
+                                <div id="deliveryMethodError" class="text-danger" style="display:none;">
+                                    Будь ласка, оберіть спосіб доставки
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -70,17 +87,12 @@
                             <div class="product-cards">
                                 <!-- Динамічний список товарів -->
                             </div>
-                            <ul class="summary-prices">
-                                <li>
-                                    <span>Доставка:</span>
-                                    <span>Безкоштовно</span>
-                                </li>
-                            </ul>
                             <div class="summary-total">
                                 <span>Всього</span>
                                 <span>{{ cart.get_total_price }} грн</span>
                             </div>
-                            <button id="confirm-order-btn" type="button" class="btn btn-main btn-block mt-20">Підтвердити замовлення</button>
+                            <button id="confirm-order-btn" type="button"
+                                class="btn btn-main btn-block mt-20">Підтвердити замовлення</button>
                         </div>
                     </div>
                 </div>
@@ -88,45 +100,153 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('confirm-order-btn').addEventListener('click', function() {
-            // Показуємо індикатор завантаження
-            this.disabled = true;
-            this.innerText = 'Обробка...';
+    document.addEventListener('DOMContentLoaded', function () {
+        // Синхронізація кошика з localStorage до серверного кошика
+        function syncCartWithServer() {
+            // Отримуємо кошик з localStorage
+            const localCart = localStorage.getItem('cart');
+            if (!localCart) return;
             
-            // Отримуємо CSRF-токен
+            // Отримуємо CSRF токен
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             
-            // Відправляємо запит
-            fetch('/place_order/', {
+            // Відправляємо запит на синхронізацію
+            fetch('/sync_cart/', {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
                 },
-                body: new URLSearchParams(new FormData(document.getElementById('checkout-form')).entries())
+                body: localCart
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Кошик синхронізовано:', data);
+                // Перезавантажуємо сторінку, щоб отримати оновлений серверний кошик
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Помилка синхронізації кошика:', error);
+            });
+        }
+        
+        // Викликаємо синхронізацію при завантаженні
+        syncCartWithServer();
+        
+        // Решта вашого існуючого коду...
+        let cartData = {};
+        try {
+            cartData = JSON.parse('{{ cart_json|escapejs }}');
+            console.log('Вміст кошика з cart_json:', cartData);
+            
+            // Перевіряємо, чи є елементи в кошику
+            const hasItems = Object.keys(cartData).length > 0;
+            if (!hasItems) {
+                console.warn('Кошик порожній згідно з cart_json');
+                document.getElementById('confirm-order-btn').disabled = true;
+                document.getElementById('confirm-order-btn').innerText = 'Кошик порожній';
+                alert('Ваш кошик порожній. Додайте товари перед оформленням замовлення.');
+            }
+        } catch (error) {
+            console.error('Помилка при розборі даних кошика:', error);
+        }
+        
+        document.getElementById('confirm-order-btn').addEventListener('click', function () {
+            // Зберігаємо посилання на кнопку
+            const button = this;
+            
+            // Показуємо індикатор завантаження
+            button.disabled = true;
+            button.innerText = 'Обробка...';
+
+            // Отримуємо CSRF-токен
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Отримуємо спосіб доставки з випадаючого списку
+            const deliveryMethod = document.getElementById('deliveryMethod').value;
+            console.log('Обраний спосіб доставки:', deliveryMethod);
+
+            if (!deliveryMethod) {
+                alert('Будь ласка, оберіть спосіб доставки');
+                button.disabled = false;
+                button.innerText = 'Підтвердити замовлення';
+                return;
+            }
+
+            // Використовуємо URL-параметри замість FormData
+            const url = `/place_order/?deliveryMethod=${encodeURIComponent(deliveryMethod)}`;
+            console.log('Відправляємо запит на URL:', url);
+
+            // Відправляємо запит
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                console.log('Статус відповіді:', response.status);
+                // Перевіряємо заголовок відповіді
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.indexOf('application/json') !== -1) {
+                    return response.json();
+                } else {
+                    throw new Error('Отримана не JSON відповідь');
+                }
+            })
+            .then(data => {
+                console.log('Дані відповіді:', data);
                 if (data.success) {
                     window.location.href = '/order_confirmation/';
                 } else {
-                    alert('Помилка: ' + (data.error || 'Невідома помилка'));
-                    this.disabled = false;
-                    this.innerText = 'Підтвердити замовлення';
+                    // Показуємо детальну інформацію про помилку
+                    console.error('Деталі помилки:', data.error);
+                    alert('Помилка: ' + data.error);
+                    button.disabled = false;
+                    button.innerText = 'Підтвердити замовлення';
                 }
             })
             .catch(error => {
                 console.error('Помилка:', error);
-                alert('Виникла помилка при оформленні замовлення');
-                this.disabled = false;
-                this.innerText = 'Підтвердити замовлення';
+                alert('Виникла помилка при оформленні замовлення. Спробуйте оновити сторінку.');
+                button.disabled = false;
+                button.innerText = 'Підтвердити замовлення';
             });
         });
+        
+        // Додаємо змінну для вартості доставки кур'єром
+        const COURIER_DELIVERY_PRICE = 120;
+
+        // Оновлення кінцевої ціни при зміні способу доставки
+        const deliveryMethodSelect = document.getElementById('deliveryMethod');
+        const summaryTotalSpan = document.querySelector('.summary-total span:last-child');
+        const baseTotal = parseFloat('{{ cart.get_total_price }}');
+
+        function updateTotal() {
+            let total = baseTotal;
+            if (deliveryMethodSelect.value === "кур’єр") {
+                total += COURIER_DELIVERY_PRICE;
+            }
+            summaryTotalSpan.textContent = total + ' грн';
+        }
+
+        if (deliveryMethodSelect) {
+            deliveryMethodSelect.addEventListener('change', updateTotal);
+            updateTotal();
+        }
+
+        // Оновлення тексту опції кур'єра з ціною доставки
+        const courierOption = document.getElementById('courierOption');
+        if (courierOption) {
+            courierOption.textContent = `Кур'єр (${COURIER_DELIVERY_PRICE} грн)`;
+        }
     });
 </script>
 {% endblock %}
