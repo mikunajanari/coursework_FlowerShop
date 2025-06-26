@@ -11,6 +11,7 @@ from .views import signup_api
 from .views import profile_details_api
 from .views import cart_api
 from .views import checkout_api
+from .views import client_orders_api
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -24,7 +25,6 @@ urlpatterns = [
     path('checkout/', checkout_api.checkout, name='checkout'),
     path('confirmation/', checkout_api.order_confirmation, name='confirmation'),
     path('profile_details/', profile_details_api.profile_details, name='profile_details'),
-    path('client_orders/', views.client_orders, name='client_orders'),
     path('shop/', shop_api.shop, name='shop'),
     path('shop/product_single/<int:product_id>/', shop_api.product_single, name='product_single'),
     path('logout/', views.logout_view, name='logout'),
@@ -83,10 +83,14 @@ urlpatterns = [
     path('api/clients/preferences', manager_api.client_preferences),
     path('api/couriers/performance', manager_api.courier_performance),
     path('api/species/most-popular', manager_api.most_popular_species),
+
+    
     path('cart/add/<int:product_id>/', cart_api.cart_add, name='cart_add'),
     path('cart/remove/<int:product_id>/', cart_api.cart_remove, name='cart_remove'),
     path('cart/update/<int:product_id>/', cart_api.cart_update_quantity, name='cart_update_quantity'),
     path('place_order/', checkout_api.place_order, name='place_order'),
     path('order_confirmation/', checkout_api.order_confirmation, name='order_confirmation'),
     path('sync_cart/', cart_api.sync_cart, name='sync_cart'),
+    path('client_orders/', client_orders_api.client_orders, name='client_orders'),
+    path('cancel_order/<int:order_id>/', client_orders_api.cancel_order, name='cancel_order'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

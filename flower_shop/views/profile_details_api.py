@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.core.files.storage import default_storage
 from django.conf import settings
+import psycopg2
+from django.contrib import messages
 
 def profile_details(request):
     # Отримати поточні дані клієнта
@@ -30,36 +32,63 @@ def profile_details(request):
             if "change_photo" in request.POST:
                 photo = request.FILES.get("photo")
                 if photo:
-                    filename = default_storage.save(f"profile_photos/{request.session['pg_user']}_{photo.name}", photo)
+                    filename = default_storage.save(f"profile_photos/{user_login}_{photo.name}", photo)
                     photo_url = f"/media/{filename}"
-                    cursor.execute("SELECT update_customer_photo(%s)", [photo_url])
+                    cursor.execute("SELECT update_customer_field_internal(%s, %s)", ['photo_link', photo_url])
                 return redirect("profile_details")
             if "update_first_name" in request.POST:
-                cursor.execute("SELECT update_customer_first_name(%s)", [request.POST.get("first_name")])
+                cursor.execute("SELECT update_customer_name_field(%s, %s)", ['FirstName', request.POST.get("first_name")])
                 return redirect("profile_details")
             if "update_surname" in request.POST:
-                cursor.execute("SELECT update_customer_surname(%s)", [request.POST.get("surname")])
+                cursor.execute("SELECT update_customer_name_field(%s, %s)", ['Surname', request.POST.get("surname")])
                 return redirect("profile_details")
             if "update_middle_name" in request.POST:
-                cursor.execute("SELECT update_customer_middle_name(%s)", [request.POST.get("middle_name")])
+                cursor.execute("SELECT update_customer_name_field(%s, %s)", ['MiddleName', request.POST.get("middle_name")])
                 return redirect("profile_details")
             if "update_phone" in request.POST:
-                cursor.execute("SELECT update_customer_phone(%s)", [request.POST.get("phone")])
+                cursor.execute("SELECT update_customer_field_internal(%s, %s)", ['phone_number', request.POST.get("phone")])
                 return redirect("profile_details")
             if "update_city" in request.POST:
-                cursor.execute("SELECT update_customer_city(%s)", [request.POST.get("city")])
+                cursor.execute("SELECT update_customer_address_field(%s, %s)", ['City', request.POST.get("city")])
                 return redirect("profile_details")
             if "update_street" in request.POST:
-                cursor.execute("SELECT update_customer_street(%s)", [request.POST.get("street")])
+                cursor.execute("SELECT update_customer_address_field(%s, %s)", ['Street', request.POST.get("street")])
                 return redirect("profile_details")
             if "update_house" in request.POST:
-                cursor.execute("SELECT update_customer_house(%s)", [request.POST.get("house")])
+                cursor.execute("SELECT update_customer_address_field(%s, %s)", ['House', request.POST.get("house")])
                 return redirect("profile_details")
             if "update_flat" in request.POST:
-                cursor.execute("SELECT update_customer_flat(%s)", [request.POST.get("flat")])
+                cursor.execute("SELECT update_customer_address_field(%s, %s)", ['Flat', request.POST.get("flat")])
                 return redirect("profile_details")
             if "update_password" in request.POST:
-                cursor.execute("SELECT change_customer_password(%s)", [request.POST.get("password")])
-                return redirect("profile_details")
+                old_password = request.POST.get("old_password")
+                new_password = request.POST.get("password")
+                user_login = request.user.username if request.user.is_authenticated else request.session.get('pg_user')
 
+                if check_pg_password(user_login, old_password):
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT change_customer_password(%s)", [new_password])
+                    messages.success(request, "Пароль успішно змінено. Увійдіть знову.")
+                    # Очистити сесію (вийти з акаунта)
+                    request.session.flush()
+                    return redirect("login_pg")  # або ваш url name для сторінки логіну
+                else:
+                    messages.error(request, "Старий пароль невірний.")
+                return redirect("profile_details")
+    
     return render(request, "flower_shop/profile_details.html", {"customer": customer})
+
+def check_pg_password(username, password):
+    db_settings = connection.settings_dict
+    try:
+        conn = psycopg2.connect(
+            dbname=db_settings['NAME'],
+            user=username,
+            password=password,
+            host=db_settings.get('HOST', ''),
+            port=db_settings.get('PORT', ''),
+        )
+        conn.close()
+        return True
+    except Exception:
+        return False

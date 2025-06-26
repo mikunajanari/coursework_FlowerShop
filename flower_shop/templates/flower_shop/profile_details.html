@@ -7,58 +7,17 @@
 {% block profile_details_active %}active{% endblock %}
 
 {% block profile_content %}
-<style>
-.edit-btn {
-    background: none;
-    border: none;
-    color: #888;
-    padding: 2px 6px;
-    font-size: 16px;
-    cursor: pointer;
-    vertical-align: middle;
-}
-.edit-btn:hover {
-    color: #333;
-}
-.inline-edit-form input,
-.inline-edit-form button {
-    font-size: 14px;
-    height: 28px;
-    padding: 2px 6px;
-}
-.inline-edit-form {
-    display: inline;
-}
-.save-btn {
-    background: #5cb85c;
-    color: #fff;
-    border: none;
-    padding: 2px 10px;
-    font-size: 13px;
-    border-radius: 3px;
-    margin-left: 4px;
-}
-.cancel-btn {
-    background: none;
-    border: none;
-    color: #888;
-    font-size: 13px;
-    margin-left: 4px;
-    cursor: pointer;
-}
-</style>
-
 <div class="dashboard-wrapper dashboard-user-profile">
     <div class="media">
         <div class="pull-left text-center">
             {% static 'images/default-profile-picture.jpg' as default_photo %}
             <img class="media-object user-img"
-                 src="{% if customer.photo_link %}{{ customer.photo_link }}{% else %}{{ default_photo }}{% endif %}"
+                 src="{% if customer.photo_link and customer.photo_link != 'null' %}{{ customer.photo_link }}{% else %}{{ default_photo }}{% endif %}"
                  alt="Фото профілю">
             <form method="post" enctype="multipart/form-data" style="margin-top:10px;">
                 {% csrf_token %}
                 <input type="file" name="photo" accept="image/*" style="display:inline;">
-                <button type="submit" name="change_photo" class="btn btn-xs btn-main">Змінити фото</button>
+                <button type="submit" name="change_photo" class="btn btn-xs">Змінити фото</button>
             </form>
         </div>
         <div class="media-body">
@@ -193,7 +152,8 @@
                         </table>
                         <form method="post" style="margin-top:20px;">
                             {% csrf_token %}
-                            <input type="password" name="password" placeholder="Новий пароль">
+                            <input type="password" name="old_password" placeholder="Старий пароль" required>
+                            <input type="password" name="password" placeholder="Новий пароль" required>
                             <button type="submit" name="update_password" class="btn btn-xs btn-main">Змінити пароль</button>
                         </form>
                     </div>
