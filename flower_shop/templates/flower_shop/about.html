@@ -1,5 +1,5 @@
 {% extends "flower_shop/base.html" %}
-
+{% load static %}
 {% block title %}EVERGREEN About{% endblock %}
 
 {% block content %}
@@ -22,18 +22,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <img class="img-responsive" src="images/about/about.jpg">
+                <img class="img-responsive" src="{% static 'images/about_us.jpg' %}">
             </div>
             <div class="col-md-6">
                 <h2 class="mt-40">Про наш магазин</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius enim, accusantium repellat ex
-                    autem numquam iure officiis facere vitae itaque.</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam qui vel cupiditate exercitationem,
-                    ea fuga est velit nulla culpa modi quis iste tempora non, suscipit repellendus labore voluptatem
-                    dicta amet?</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam qui vel cupiditate exercitationem,
-                    ea fuga est velit nulla culpa modi quis iste tempora non, suscipit repellendus labore voluptatem
-                    dicta amet?</p>
+                <p>
+                    EVERGREEN — це не просто магазин квітів. Ми вирощуємо кожну рослину з любов’ю, використовуючи сучасні технології та екологічно чисті добрива. Наші теплиці — це місце, де квіти отримують максимум уваги, а кожен клієнт — індивідуальний підхід.
+                </p>
+                <p>
+                    Чому обирають саме нас? Ми гарантуємо свіжість і якість кожної квітки, широкий асортимент для будь-якої події та професійні консультації. Наші флористи допоможуть створити унікальні композиції, а швидка доставка забезпечить вчасне отримання замовлення.
+                </p>
             </div>
         </div>
     </div>

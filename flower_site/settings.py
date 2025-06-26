@@ -80,12 +80,28 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'FlowerSystem',
+        # 'USER': 'daria',
+        # 'PASSWORD': 'daria_bryz',
         'USER': 'guest_user',
         'PASSWORD': 'guest',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'Test_FlowerSystem',
+#         'USER': 'test_user',
+#         'PASSWORD': 'test_password',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#         'TEST': {
+#             'MIRROR': 'default',
+#         },
+#     }
+# }
 
 
 # Password validation

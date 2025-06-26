@@ -12,12 +12,13 @@ from .views import profile_details_api
 from .views import cart_api
 from .views import checkout_api
 from .views import client_orders_api
+from .views import index_api
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path(r'', views.index, name='index'),
+    path(r'', index_api.index, name='index'),
     path('about/', views.about, name='about'),
     path('login/', login_api.login_pg, name='login'),
     path('signup/', signup_api.signup, name='signup'),

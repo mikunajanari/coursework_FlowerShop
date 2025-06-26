@@ -1,52 +1,59 @@
 {% extends "flower_shop/base.html" %}
+{% load static %}
 
 {% block title %}EVERGREEN{% endblock %}
 
 {% block content %}
 
-	<div class="hero-slider">
-		<div class="slider-item th-fullpage hero-area" style="background-image: url(images/slider/slider-1.jpg);">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-8 text-center">
-						<p data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">ПРОДУКЦІЯ</p>
-						<h1 data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".5">текст<br>
-							12345.</h1>
-						<a data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".8" class="btn"
-							href="{% url 'shop' %}">Купити</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="slider-item th-fullpage hero-area" style="background-image: url(images/slider/slider-3.jpg);">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-8 text-left">
-						<p data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">ПРОДУКЦІЯ</p>
-						<h1 data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".5">12345<br>
-							12345.</h1>
-						<a data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".8" class="btn"
-							href="{% url 'shop' %}">Купити</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="slider-item th-fullpage hero-area" style="background-image: url(images/slider/slider-2.jpg);">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-8 text-right">
-						<p data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".1">Продукція</p>
-						<h1 data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".5">12345<br>
-							12345.</h1>
-						<a data-duration-in=".3" data-animation-in="fadeInUp" data-delay-in=".8" class="btn"
-							href="{% url 'shop' %}">Купити</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="hero-slider">
+    <!-- Слайд 1 -->
+    <div class="slider-item th-fullpage hero-area" style="background-image: none; position:relative;">
+        <img src="{% static 'images/slider/slide_1.jpg' %}" alt="Широкий вибір квітів"
+            style="position:absolute; left:0; top:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div style="position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.35); z-index:2; pointer-events:none;"></div>
+        <div class="container" style="position:relative; z-index:3;">
+            <div class="row">
+                <div class="col-lg-8 text-center">
+                    <p>ПРОДУКЦІЯ</p>
+                    <h1>Широкий вибір квітів для будь-якої події</h1>
+                    <a class="btn" href="{% url 'shop' %}">Купити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Слайд 2 -->
+    <div class="slider-item th-fullpage hero-area" style="background-image: none; position:relative;">
+        <img src="{% static 'images/slider/slide_2.jpg' %}" alt="Теплиця з квітами"
+            style="position:absolute; left:0; top:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div style="position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.35); z-index:2; pointer-events:none;"></div>
+        <div class="container" style="position:relative; z-index:3;">
+            <div class="row">
+                <div class="col-lg-8 text-left">
+                    <p>МАГАЗИН</p>
+                    <h1>Купуйте найкращі квіти від наших теплиць онлайн або в магазині</h1>
+                    <a class="btn" href="{% url 'shop' %}">Купити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Слайд 3 -->
+    <div class="slider-item th-fullpage hero-area" style="background-image: none; position:relative;">
+        <img src="{% static 'images/slider/slide_3.jpg' %}" alt="слайд 3"
+            style="position:absolute; left:0; top:0; width:100%; height:100%; object-fit:cover; z-index:1;">
+        <div style="position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.35); z-index:2; pointer-events:none;"></div>
+        <div class="container" style="position:relative; z-index:3;">
+            <div class="row">
+                <div class="col-lg-8 text-right">
+                    <p>ТЕПЛИЦЯ</p>
+                    <h1>Вирощуємо кожну квітку з любов’ю та турботою власноруч</h1>
+                    <a class="btn" href="{% url 'shop' %}">Купити</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-	<section class="products section bg-gray">
+<section class="products section bg-gray">
 		<div class="container">
 			<div class="row">
 				<div class="title text-center">
@@ -54,278 +61,29 @@
 				</div>
 			</div>
 			<div class="row">
-
+				{% for product in popular_products %}
 				<div class="col-md-4">
 					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-1.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
+						<div class="product-thumb"
+							style="height:220px; display:flex; align-items:center; justify-content:center; position:relative;">
+							<div class="overlay"
+								style="position:absolute; inset:0; background:rgba(0,0,0,0.1); pointer-events:none;">
 							</div>
+							<a href="{% url 'shop' %}" style="z-index:2; position:relative;">
+								<img class="img-responsive" src="https://{{ product.photo_link }}" alt="product-img"
+									style="max-width:200px; max-height:200px; width:auto; height:auto; object-fit:contain;" />
+							</a>
 						</div>
 						<div class="product-content">
-							<h4><a href="product-single.html">Штука</a></h4>
-							<p class="price">Дорого</p>
+							<h4>{{ product.genus_name }} — {{ product.species_name }}</h4>
 						</div>
 					</div>
 				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-2.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Щось</a></h4>
-							<p class="price">250</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-3.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">Щось ще</a></h4>
-							<p class="price">340</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-4.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">1</a></h4>
-							<p class="price">1245</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-5.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">23314</a></h4>
-							<p class="price">4357</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-6.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">46578</a></h4>
-							<p class="price">$2456</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-7.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">3456</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-8.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">65789</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<div class="product-item">
-						<div class="product-thumb">
-							<img class="img-responsive" src="images/shop/products/product-9.jpg" alt="product-img" />
-							<div class="preview-meta">
-								<ul>
-									<li>
-										<span data-toggle="modal" data-target="#product-modal">
-											<i class="tf-ion-ios-search-strong"></i>
-										</span>
-									</li>
-									<li>
-										<a href="#"><i class="tf-ion-ios-heart"></i></a>
-									</li>
-									<li>
-										<a href="#!"><i class="tf-ion-android-cart"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-						<div class="product-content">
-							<h4><a href="product-single.html">34567</a></h4>
-							<p class="price">$200</p>
-						</div>
-					</div>
-				</div>
-
-				<!-- Modal -->
-				<div class="modal product-modal fade" id="product-modal">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<i class="tf-ion-close"></i>
-					</button>
-					<div class="modal-dialog " role="document">
-						<div class="modal-content">
-							<div class="modal-body">
-								<div class="row">
-									<div class="col-md-8 col-sm-6 col-xs-12">
-										<div class="modal-image">
-											<img class="img-responsive" src="images/shop/products/modal-product.jpg"
-												alt="product-img" />
-										</div>
-									</div>
-									<div class="col-md-4 col-sm-6 col-xs-12">
-										<div class="product-short-details">
-											<h2 class="product-title">GM Pendant, Basalt Grey</h2>
-											<p class="product-price">$200</p>
-											<p class="product-short-description">
-												Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem iusto
-												nihil cum. Illo laborum numquam rem aut officia dicta cumque.
-											</p>
-											<a href="cart.html" class="btn btn-main">Додати в кошик</a>
-											<a href="product-single.html" class="btn btn-transparent">Переглянути деталі
-												продукту</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div><!-- /.modal -->
-
+				{% empty %}
+				<div class="col-12 text-center">Немає популярної продукції</div>
+				{% endfor %}
 			</div>
 		</div>
 	</section>
 
-{% endblock %}
+	{% endblock %}
