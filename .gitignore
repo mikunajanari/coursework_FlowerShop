@@ -28,6 +28,7 @@ Thumbs.db
 # Media/uploads (якщо не потрібно зберігати у git)
 media/
 media/*
+staticfiles/
 
 # Logs
 *.log
