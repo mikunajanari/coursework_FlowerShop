@@ -1,22 +1,37 @@
-# Byte-compiled / optimized / DLL files
+# Python
+*.pyc
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyo
+*.pyd
+*.pyd
+*.pyc
+*.pyo
 
-# Virtual environment
+# Virtualenv
 venv/
-.env
+ENV/
+env/
+.venv/
 
-# SQLite DB
+# Django
+db.sqlite3
 *.sqlite3
 
-# Django static/media
-staticfiles/
-media/
-
-# VS Code / PyCharm settings
+# VS Code
 .vscode/
-.idea/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media/uploads (якщо не потрібно зберігати у git)
+media/
+media/*
 
 # Logs
 *.log
+
+# Міграції
+**/migrations/*.pyc
+**/migrations/__pycache__/
