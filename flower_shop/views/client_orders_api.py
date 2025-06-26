@@ -5,6 +5,9 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 def client_orders(request):
+    groups = request.session.get('pg_groups', [])
+    if 'customer' not in groups:
+        return redirect('login')
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM get_customer_history()")
         rows = cursor.fetchall()

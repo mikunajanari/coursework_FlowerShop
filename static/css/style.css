@@ -1465,14 +1465,7 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
 .dashboard-wrapper h4 {
   font-size: 16px;
 }
-.dashboard-wrapper .user-img {
-  width: 120px;
-  border-radius: 100px;
-}
 
-.dashboard-user-profile .user-img {
-  width: 180px;
-}
 .dashboard-user-profile .user-profile-list {
   margin-top: 30px;
   padding-left: 30px;
@@ -2386,4 +2379,14 @@ input[type=email]:focus, input[type=password]:focus, input[type=text]:focus, inp
     font-size: 13px;
     margin-left: 4px;
     cursor: pointer;
+}
+
+.user-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+    display: block;
+    margin: 0 auto;
 }

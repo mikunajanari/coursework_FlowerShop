@@ -9,6 +9,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 def checkout(request):
+    if not request.session.get('pg_user'):
+        return redirect('login')
+    
     from flower_shop.cart import Cart
     
     cart = Cart(request)

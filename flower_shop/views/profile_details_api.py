@@ -6,6 +6,8 @@ import psycopg2
 from django.contrib import messages
 
 def profile_details(request):
+    if not request.session.get('pg_user'):
+        return redirect('login')
     # Отримати поточні дані клієнта
     customer = None
     user_login = request.user.username if request.user.is_authenticated else request.session.get('pg_user')
@@ -69,9 +71,8 @@ def profile_details(request):
                     with connection.cursor() as cursor:
                         cursor.execute("SELECT change_customer_password(%s)", [new_password])
                     messages.success(request, "Пароль успішно змінено. Увійдіть знову.")
-                    # Очистити сесію (вийти з акаунта)
                     request.session.flush()
-                    return redirect("login_pg")  # або ваш url name для сторінки логіну
+                    return redirect("profile_details")
                 else:
                     messages.error(request, "Старий пароль невірний.")
                 return redirect("profile_details")
