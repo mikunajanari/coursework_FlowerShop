@@ -13,6 +13,7 @@ def orders_for_delivery(request):
             FROM Orders_For_Delivery
         """)
         rows = cursor.fetchall()
+        print("rows:", rows)
     data = [
         {
             'order_id': row[0],
@@ -45,9 +46,9 @@ def assign_courier(request):
     
 @require_GET
 def orders_taken_by_courier(request):
-    # Отримати логін поточного користувача (наприклад, з request.user)
-    # Тут приклад для request.user.username, адаптуйте під свою автентифікацію!
-    login = "ivan.petrenko_gmail.com"
+    login = request.session.get('pg_user')
+    if not login:
+        return JsonResponse({'error': 'Неавторизовано'}, status=401)
     print("Courier login for taken orders:", login)
     with connection.cursor() as cursor:
         cursor.execute("""

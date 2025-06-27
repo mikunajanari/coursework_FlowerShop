@@ -7,7 +7,7 @@ class DynamicDBUserMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Не змінювати користувача під час тестів!
+        # Не змінювати користувача під час тестів
         if 'test' in sys.argv:
             return self.get_response(request)
         pg_user = request.session.get('pg_user')
